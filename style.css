@@ -1,1 +1,35 @@
+:root {
+    --mc-bg: #313131;
+    --mc-panel: #C6C6C6;
+    --mc-green: #55FF55;
+    --mc-red: #FF5555;
+}
+
+body { 
+    background-color: var(--mc-bg); 
+    font-family: 'Press Start 2P', cursive; 
+    color: white; 
+}
+
+.mc-container {
+    background: var(--mc-panel);
+    border: 4px solid #000;
+    box-shadow: inset -4px -4px #555, inset 4px 4px #fff;
+    padding: 20px; color: #333; margin: 20px auto; max-width: 800px;
+}
+
+.mc-input {
+    background: #000; color: var(--mc-green); padding: 10px; width: 80%; border: 2px solid #555; margin: 10px 0;
+}
+
+.mc-btn {
+    padding: 10px; cursor: pointer; border: 2px solid #000; font-family: 'Press Start 2P';
+}
+
+.green { background: var(--mc-green); }
+.red { background: var(--mc-red); }
+
+.console-box {
+    background: #000; height: 150px; overflow-y: auto; color: #fff; font-size: 10px; padding: 10px; margin: 10px 0;
+}
 
