@@ -36,3 +36,193 @@
     <script src="script.js"></script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarCatHost | Minecraft Servers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --mc-bg: #313131;
+            --mc-panel: #C6C6C6;
+            --mc-border-light: #ffffff;
+            --mc-border-dark: #555555;
+            --mc-green: #55FF55;
+            --mc-button: #707070;
+            --mc-button-hover: #8B8B8B;
+        }
+
+        body {
+            background-color: var(--mc-bg);
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Textura leve */
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 { color: var(--mc-green); text-shadow: 3px 3px #000; font-size: 24px; }
+
+        /* Painel Estilo Minecraft */
+        .mc-container {
+            background: var(--mc-panel);
+            border: 4px solid #000;
+            box-shadow: inset -4px -4px var(--mc-border-dark), inset 4px 4px var(--mc-border-light);
+            padding: 20px;
+            color: #3f3f3f;
+            width: 90%;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        /* Toggles e Saldo */
+        .wallet-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #a0a0a0;
+            padding: 10px;
+            border: 2px solid #000;
+        }
+
+        /* Cards de Planos */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .plan-card {
+            background: #8b8b8b;
+            border: 3px solid #000;
+            box-shadow: inset -3px -3px #555, inset 3px 3px #fff;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .plan-card:hover { transform: scale(1.02); }
+        .plan-card h3 { margin-top: 0; color: #fff; text-shadow: 2px 2px #000; }
+        .price { font-size: 20px; color: #00AA00; margin: 10px 0; }
+
+        /* Botões Minecraft */
+        .mc-btn {
+            background: var(--mc-button);
+            border: 2px solid #000;
+            box-shadow: inset -2px -2px #333, inset 2px 2px #aaa;
+            color: #fff;
+            padding: 10px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .mc-btn:hover { background: var(--mc-button-hover); }
+        .mc-btn:active { box-shadow: inset 2px 2px #333; }
+
+        /* Checkout e Cupom */
+        .checkout-section {
+            margin-top: 20px;
+            border-top: 3px solid #000;
+            padding-top: 15px;
+        }
+
+        input[type="text"] {
+            background: #000;
+            color: var(--mc-green);
+            border: 2px solid #fff;
+            padding: 8px;
+            font-family: 'Press Start 2P';
+            font-size: 10px;
+            width: 60%;
+        }
+
+        .footer { font-size: 8px; margin-top: 30px; color: #aaa; text-align: center; }
+        a { color: var(--mc-green); text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <h1>★ StarCatHost ★</h1>
+
+    <div class="mc-container">
+        <div class="wallet-section">
+            <div>Saldo: <span id="balance">0.00</span>$</div>
+            <button class="mc-btn" style="width: auto; margin:0;" onclick="collectDaily()">Coletar Diário</button>
+        </div>
+
+        <div class="plans-grid">
+            <div class="plan-card">
+                <h3>Básico</h3>
+                <p>1GB RAM<br>Slot: 10</p>
+                <div class="price">6$</div>
+                <button class="mc-btn" onclick="selectPlan('Básico', 6)">Selecionar</button>
+            </div>
+            <div class="plan-card">
+                <h3>Mediano</h3>
+                <p>4GB RAM<br>Slot: 50</p>
+                <div class="price">8$</div>
+                <button class="mc-btn" onclick="selectPlan('Mediano', 8)">Selecionar</button>
+            </div>
+            <div class="plan-card">
+                <h3>Plus</h3>
+                <p>8GB RAM<br>Ilimitado</p>
+                <div class="price">15$</div>
+                <button class="mc-btn" onclick="selectPlan('Plus', 15)">Selecionar</button>
+            </div>
+        </div>
+
+        <div class="checkout-section">
+            <p id="selected-info">Nenhum plano selecionado</p>
+            <input type="text" id="coupon" placeholder="CUPOM">
+            <button class="mc-btn" style="width:30%; display:inline-block;" onclick="applyCoupon()">Aplicar</button>
+            <button class="mc-btn" style="background:#55FF55; color:#000;">PAGAR AGORA</button>
+        </div>
+    </div>
+
+    <div class="mc-container" style="font-size: 10px; line-height: 1.5;">
+        <h3>Política de Privacidade</h3>
+        <p>Na StarCatHost, seus dados são guardados em um baú com Obsidian. Não compartilhamos informações com Creepers ou terceiros. Ao usar nossos serviços, você concorda com os termos de craft.</p>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 StarCatHost - Todos os direitos reservados.<br>
+        <a href="#">Termos de Uso</a> | <a href="#">Suporte</a>
+    </div>
+
+    <script>
+        let balance = 0.00;
+        let selectedPrice = 0;
+
+        function collectDaily() {
+            balance += 0.50;
+            document.getElementById('balance').innerText = balance.toFixed(2);
+            alert("Você coletou 0.50$ de saldo diário!");
+        }
+
+        function selectPlan(name, price) {
+            selectedPrice = price;
+            document.getElementById('selected-info').innerText = "Plano: " + name + " - Valor: " + price + "$";
+        }
+
+        function applyCoupon() {
+            let cp = document.getElementById('coupon').value;
+            if(cp === "STARCAT") {
+                selectedPrice = selectedPrice * 0.9;
+                alert("Cupom aplicado! 10% de desconto.");
+                document.getElementById('selected-info').innerText += " (Com Desconto: " + selectedPrice.toFixed(2) + "$)";
+            } else {
+                alert("Cupom inválido!");
+            }
+        }
+    </script>
+</body>
+</html>
