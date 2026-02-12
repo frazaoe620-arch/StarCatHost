@@ -1,1 +1,38 @@
 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>StarCatHost | Painel Profissional</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="auth-screen" class="mc-modal-overlay">
+        <div class="mc-container auth-box">
+            <h2>LOGIN</h2>
+            <input type="text" id="user" placeholder="USUÁRIO" class="mc-input">
+            <input type="password" id="pass" placeholder="SENHA" class="mc-input">
+            <button class="mc-btn green" onclick="handleAuth()">ENTRAR</button>
+        </div>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+        <div class="mc-container">
+            <div class="header-dash">
+                <span>IP: <strong>starcat.host</strong></span>
+                <span id="status-tag">● OFFLINE</span>
+            </div>
+            
+            <div class="console-box" id="console"></div>
+            
+            <div class="controls">
+                <button class="mc-btn green" onclick="startServer()">INICIAR</button>
+                <button class="mc-btn red" onclick="stopServer()">PARAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
