@@ -1,47 +1,9 @@
-
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>StarCatHost | Painel Profissional</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div id="auth-screen" class="mc-modal-overlay">
-        <div class="mc-container auth-box">
-            <h2>LOGIN</h2>
-            <input type="text" id="user" placeholder="USUÁRIO" class="mc-input">
-            <input type="password" id="pass" placeholder="SENHA" class="mc-input">
-            <button class="mc-btn green" onclick="handleAuth()">ENTRAR</button>
-        </div>
-    </div>
-
-    <div id="dashboard" style="display:none;">
-        <div class="mc-container">
-            <div class="header-dash">
-                <span>IP: <strong>starcat.host</strong></span>
-                <span id="status-tag">● OFFLINE</span>
-            </div>
-            
-            <div class="console-box" id="console"></div>
-            
-            <div class="controls">
-                <button class="mc-btn green" onclick="startServer()">INICIAR</button>
-                <button class="mc-btn red" onclick="stopServer()">PARAR</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StarCatHost | Minecraft Servers</title>
+    <title>StarCatHost | Painel de Controle</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -50,178 +12,188 @@
             --mc-border-light: #ffffff;
             --mc-border-dark: #555555;
             --mc-green: #55FF55;
+            --mc-red: #FF5555;
             --mc-button: #707070;
-            --mc-button-hover: #8B8B8B;
         }
 
-        body {
+        body, html {
+            height: 100%; margin: 0;
             background-color: var(--mc-bg);
-            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png'); /* Textura leve */
-            color: #fff;
-            font-family: 'Press Start 2P', cursive;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            color: #fff; font-family: 'Press Start 2P', cursive;
+            overflow-x: hidden;
         }
 
-        h1 { color: var(--mc-green); text-shadow: 3px 3px #000; font-size: 24px; }
+        /* Auxiliares de Visualização */
+        .hidden { display: none !important; }
 
-        /* Painel Estilo Minecraft */
+        /* --- TELAS DE LOGIN/REGISTRO --- */
+        .auth-overlay {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; text-align: center;
+        }
+
         .mc-container {
-            background: var(--mc-panel);
-            border: 4px solid #000;
+            background: var(--mc-panel); border: 4px solid #000;
             box-shadow: inset -4px -4px var(--mc-border-dark), inset 4px 4px var(--mc-border-light);
-            padding: 20px;
-            color: #3f3f3f;
-            width: 90%;
-            max-width: 900px;
-            margin-bottom: 20px;
+            padding: 25px; color: #3f3f3f; width: 350px;
         }
 
-        /* Toggles e Saldo */
-        .wallet-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            background: #a0a0a0;
-            padding: 10px;
-            border: 2px solid #000;
+        .mc-input {
+            background: #000; color: var(--mc-green); border: 2px solid #fff;
+            padding: 10px; font-family: 'Press Start 2P'; font-size: 10px;
+            width: 90%; margin: 10px 0;
         }
 
-        /* Cards de Planos */
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        .google-btn { background: #4285F4 !important; color: white !important; font-size: 8px !important; }
+
+        /* --- BARRA LATERAL (SIDEBAR) --- */
+        .layout-wrapper { display: flex; height: 100vh; width: 100vw; }
+
+        .sidebar {
+            width: 250px; background: #222; border-right: 4px solid #000;
+            padding: 20px 10px; display: flex; flex-direction: column; gap: 10px;
         }
 
-        .plan-card {
-            background: #8b8b8b;
-            border: 3px solid #000;
-            box-shadow: inset -3px -3px #555, inset 3px 3px #fff;
-            padding: 15px;
-            text-align: center;
-            transition: transform 0.2s;
+        .sidebar-item {
+            padding: 15px; background: var(--mc-button); border: 2px solid #000;
+            cursor: pointer; font-size: 10px; text-align: left;
         }
 
-        .plan-card:hover { transform: scale(1.02); }
-        .plan-card h3 { margin-top: 0; color: #fff; text-shadow: 2px 2px #000; }
-        .price { font-size: 20px; color: #00AA00; margin: 10px 0; }
+        .sidebar-item:hover { background: var(--mc-green); color: #000; }
 
-        /* Botões Minecraft */
+        /* --- ÁREA DE CONTEÚDO --- */
+        .main-panel { flex: 1; padding: 30px; overflow-y: auto; color: #3f3f3f; }
+
+        .mc-card { background: var(--mc-panel); border: 4px solid #000; padding: 20px; margin-bottom: 20px; }
+
+        /* --- BOTÕES --- */
         .mc-btn {
-            background: var(--mc-button);
-            border: 2px solid #000;
+            background: var(--mc-button); border: 2px solid #000;
             box-shadow: inset -2px -2px #333, inset 2px 2px #aaa;
-            color: #fff;
-            padding: 10px;
-            cursor: pointer;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            width: 100%;
-            margin-top: 10px;
+            color: #fff; padding: 12px; cursor: pointer;
+            font-family: 'Press Start 2P'; font-size: 9px; margin-top: 10px;
         }
 
-        .mc-btn:hover { background: var(--mc-button-hover); }
         .mc-btn:active { box-shadow: inset 2px 2px #333; }
+        .green { background: var(--mc-green) !important; color: #000 !important; }
 
-        /* Checkout e Cupom */
-        .checkout-section {
-            margin-top: 20px;
-            border-top: 3px solid #000;
-            padding-top: 15px;
+        /* --- CONSOLE --- */
+        #console {
+            background: #000; color: #00FF00; height: 200px; 
+            padding: 10px; font-family: monospace; font-size: 11px;
+            overflow-y: auto; border: 4px solid #555; margin: 10px 0;
         }
 
-        input[type="text"] {
-            background: #000;
-            color: var(--mc-green);
-            border: 2px solid #fff;
-            padding: 8px;
-            font-family: 'Press Start 2P';
-            font-size: 10px;
-            width: 60%;
-        }
-
-        .footer { font-size: 8px; margin-top: 30px; color: #aaa; text-align: center; }
-        a { color: var(--mc-green); text-decoration: none; }
+        .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .plan-item { background: #8b8b8b; border: 2px solid #000; padding: 10px; text-align: center; color: white; }
     </style>
 </head>
 <body>
 
-    <h1>★ StarCatHost ★</h1>
-
-    <div class="mc-container">
-        <div class="wallet-section">
-            <div>Saldo: <span id="balance">0.00</span>$</div>
-            <button class="mc-btn" style="width: auto; margin:0;" onclick="collectDaily()">Coletar Diário</button>
-        </div>
-
-        <div class="plans-grid">
-            <div class="plan-card">
-                <h3>Básico</h3>
-                <p>1GB RAM<br>Slot: 10</p>
-                <div class="price">6$</div>
-                <button class="mc-btn" onclick="selectPlan('Básico', 6)">Selecionar</button>
-            </div>
-            <div class="plan-card">
-                <h3>Mediano</h3>
-                <p>4GB RAM<br>Slot: 50</p>
-                <div class="price">8$</div>
-                <button class="mc-btn" onclick="selectPlan('Mediano', 8)">Selecionar</button>
-            </div>
-            <div class="plan-card">
-                <h3>Plus</h3>
-                <p>8GB RAM<br>Ilimitado</p>
-                <div class="price">15$</div>
-                <button class="mc-btn" onclick="selectPlan('Plus', 15)">Selecionar</button>
-            </div>
-        </div>
-
-        <div class="checkout-section">
-            <p id="selected-info">Nenhum plano selecionado</p>
-            <input type="text" id="coupon" placeholder="CUPOM">
-            <button class="mc-btn" style="width:30%; display:inline-block;" onclick="applyCoupon()">Aplicar</button>
-            <button class="mc-btn" style="background:#55FF55; color:#000;">PAGAR AGORA</button>
+    <div id="screen-auth" class="auth-overlay">
+        <h1 style="color: var(--mc-green); text-shadow: 4px 4px #000;">StarCatHost</h1>
+        <div class="mc-container">
+            <h2 style="font-size: 14px;">LOGIN</h2>
+            <input type="text" id="user" placeholder="USUÁRIO" class="mc-input">
+            <input type="password" placeholder="SENHA" class="mc-input">
+            <button class="mc-btn green" style="width: 100%;" onclick="toStore()">ENTRAR</button>
+            <button class="mc-btn google-btn" style="width: 100%;" onclick="toStore()">ENTRAR COM GOOGLE</button>
+            <p style="font-size: 8px; margin-top: 15px;">Não tem conta? <span style="text-decoration: underline; cursor:pointer;">Registre-se</span></p>
         </div>
     </div>
 
-    <div class="mc-container" style="font-size: 10px; line-height: 1.5;">
-        <h3>Política de Privacidade</h3>
-        <p>Na StarCatHost, seus dados são guardados em um baú com Obsidian. Não compartilhamos informações com Creepers ou terceiros. Ao usar nossos serviços, você concorda com os termos de craft.</p>
+    <div id="screen-store" class="auth-overlay hidden" style="justify-content: flex-start; padding-top: 50px;">
+        <h1 style="color: var(--mc-green);">ESCOLHA SEU PLANO</h1>
+        <div class="mc-container" style="width: 80%; max-width: 800px;">
+            <div class="plans-grid">
+                <div class="plan-item">
+                    <h3>FREE</h3>
+                    <p>512MB RAM</p>
+                    <p>0$</p>
+                    <button class="mc-btn green" onclick="buyPlan('FREE')">ATIVAR</button>
+                </div>
+                <div class="plan-item">
+                    <h3>BASIC</h3>
+                    <p>2GB RAM</p>
+                    <p>6$</p>
+                    <button class="mc-btn green" onclick="buyPlan('BASIC')">COMPRAR</button>
+                </div>
+                <div class="plan-item">
+                    <h3>PLUS</h3>
+                    <p>8GB RAM</p>
+                    <p>15$</p>
+                    <button class="mc-btn green" onclick="buyPlan('PLUS')">COMPRAR</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="footer">
-        &copy; 2026 StarCatHost - Todos os direitos reservados.<br>
-        <a href="#">Termos de Uso</a> | <a href="#">Suporte</a>
+    <div id="screen-panel" class="layout-wrapper hidden">
+        <div class="sidebar">
+            <div style="color: var(--mc-green); font-size: 10px; margin-bottom: 20px;">★ StarCat Panel</div>
+            <div class="sidebar-item" onclick="switchTab('server')">ABA /SERVER</div>
+            <div class="sidebar-item" onclick="switchTab('config')">CONFIG MUNDO</div>
+            <div class="sidebar-item" onclick="switchTab('files')">ARQUIVOS</div>
+            <div class="sidebar-item" onclick="location.reload()">SAIR</div>
+        </div>
+
+        <div class="main-panel">
+            
+            <div id="tab-server" class="mc-card">
+                <h2 style="font-size: 16px;">CONSOLE DO SERVIDOR</h2>
+                <div id="console">
+                    [Sistema] Servidor pronto. Aguardando início...
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="mc-btn green" onclick="logConsole('Iniciando servidor...')">START</button>
+                    <button class="mc-btn" style="background: var(--mc-red);" onclick="logConsole('Servidor parado.')">STOP</button>
+                </div>
+            </div>
+
+            <div id="tab-config" class="mc-card hidden">
+                <h2 style="font-size: 16px;">CONFIGURAR MUNDO</h2>
+                <label style="font-size: 10px;">NOME DO MUNDO:</label><br>
+                <input type="text" class="mc-input" placeholder="Minha_Craft_Host" style="width: 50%;"><br>
+                <label style="font-size: 10px;">DIFICULDADE:</label><br>
+                <select class="mc-input" style="width: 55%; color: white;">
+                    <option>HARDCORE</option>
+                    <option>NORMAL</option>
+                    <option>PEACEFUL</option>
+                </select>
+                <button class="mc-btn green" onclick="alert('Salvo!')">SALVAR CONFIGS</button>
+            </div>
+
+        </div>
     </div>
 
     <script>
-        let balance = 0.00;
-        let selectedPrice = 0;
-
-        function collectDaily() {
-            balance += 0.50;
-            document.getElementById('balance').innerText = balance.toFixed(2);
-            alert("Você coletou 0.50$ de saldo diário!");
+        // Trocar de Login para Loja
+        function toStore() {
+            document.getElementById('screen-auth').classList.add('hidden');
+            document.getElementById('screen-store').classList.remove('hidden');
         }
 
-        function selectPlan(name, price) {
-            selectedPrice = price;
-            document.getElementById('selected-info').innerText = "Plano: " + name + " - Valor: " + price + "$";
+        // Simular Compra e liberar Painel
+        function buyPlan(plan) {
+            alert("Plano " + plan + " adquirido com sucesso! Abrindo painel...");
+            document.getElementById('screen-store').classList.add('hidden');
+            document.getElementById('screen-panel').classList.remove('hidden');
         }
 
-        function applyCoupon() {
-            let cp = document.getElementById('coupon').value;
-            if(cp === "STARCAT") {
-                selectedPrice = selectedPrice * 0.9;
-                alert("Cupom aplicado! 10% de desconto.");
-                document.getElementById('selected-info').innerText += " (Com Desconto: " + selectedPrice.toFixed(2) + "$)";
-            } else {
-                alert("Cupom inválido!");
-            }
+        // Sistema de abas da barra lateral
+        function switchTab(tab) {
+            document.getElementById('tab-server').classList.add('hidden');
+            document.getElementById('tab-config').classList.add('hidden');
+            
+            if(tab === 'server') document.getElementById('tab-server').classList.remove('hidden');
+            if(tab === 'config') document.getElementById('tab-config').classList.remove('hidden');
+        }
+
+        // Log no console
+        function logConsole(text) {
+            const con = document.getElementById('console');
+            con.innerHTML += "<br>[StarCat] " + text;
+            con.scrollTop = con.scrollHeight;
         }
     </script>
 </body>
