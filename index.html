@@ -3,188 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StarCatHost | Sistema Profissional</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Painel do Criador - Addons Hub</title>
     <style>
-        :root {
-            --bg-dark: #121212;
-            --mc-panel: #313131;
-            --emerald: #00FF41;
-            --purple: #A020F0;
-            --gold: #FFD700;
+        body { font-family: 'Segoe UI', sans-serif; background-color: #121212; color: white; margin: 0; }
+        nav { background: #1f1f1f; padding: 1rem; text-align: center; border-bottom: 3px solid #388e3c; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 20px; background: #1e1e1e; border-radius: 8px; }
+        
+        h2 { color: #4caf50; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        
+        input[type="text"], textarea, input[type="file"] {
+            width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #333;
+            background: #2d2d2d; color: white; box-sizing: border-box;
         }
 
-        body, html { height: 100%; margin: 0; background: var(--bg-dark); color: #fff; font-family: 'Press Start 2P', cursive; image-rendering: pixelated; }
-        .hidden { display: none !important; }
-
-        /* Estilo Base Minecraft */
-        .mc-container {
-            background: var(--mc-panel); border: 6px solid #000;
-            box-shadow: inset -4px -4px #000, inset 4px 4px #555; padding: 20px;
+        button {
+            background-color: #4caf50; color: white; border: none; padding: 12px 20px;
+            cursor: pointer; font-size: 16px; border-radius: 5px; width: 100%;
         }
 
-        /* Botões */
-        .mc-btn {
-            background: #555; border: 3px solid #000; box-shadow: inset -3px -3px #222, inset 3px 3px #888;
-            color: #fff; padding: 12px; cursor: pointer; font-family: 'Press Start 2P'; font-size: 9px;
-        }
-        .mc-btn:hover { background: #666; }
-        .btn-green { background: #008000 !important; box-shadow: inset -3px -3px #004d00, inset 3px 3px #00cc00 !important; }
-
-        /* Auth & Store Layout */
-        .full-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-
-        /* Sidebar e Painel */
-        .layout { display: flex; height: 100vh; }
-        .sidebar { width: 260px; background: #000; border-right: 6px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .nav-link { padding: 15px; border: 3px solid transparent; cursor: pointer; font-size: 9px; }
-        .nav-link:hover, .active-nav { border: 3px solid var(--emerald); background: #1a1a1a; color: var(--emerald); }
-        .content { flex: 1; padding: 40px; overflow-y: auto; }
-
-        /* Inputs */
-        .mc-input { background: #000; color: var(--emerald); border: 3px solid #555; padding: 10px; font-family: 'Press Start 2P'; font-size: 10px; margin-bottom: 10px; }
-
-        /* Console */
-        .terminal { background: #000; color: #00FF41; height: 250px; padding: 15px; overflow-y: auto; font-family: monospace; border: 4px solid #444; }
+        button:hover { background-color: #45a049; }
+        .my-addons { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="screen-auth" class="full-screen">
-        <h1 style="color: var(--emerald); text-shadow: 4px 4px #000;">STARCAT HOST</h1>
-        <div class="mc-container" style="width: 320px; text-align: center;">
-            <p style="font-size: 10px;">LOGIN SISTEMA</p>
-            <input type="text" id="user-input" placeholder="USUÁRIO" class="mc-input" style="width: 90%;">
-            <button class="mc-btn btn-green" style="width: 100%;" onclick="app.login()">ENTRAR COM GOOGLE</button>
+<nav>
+    <h1>MINECRAFT ADDON HUB</h1>
+</nav>
+
+<div class="container">
+    <h2>Publicar Novo Conteúdo</h2>
+    <form id="uploadForm">
+        <div class="form-group">
+            <label>Nome do Addon/Textura</label>
+            <input type="text" placeholder="Ex: Espadas de Cristal v1" required>
         </div>
+
+        <div class="form-group">
+            <label>Descrição</label>
+            <textarea rows="4" placeholder="Descreva o que seu addon faz..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Arquivo (.mcpack, .mcaddon ou .zip)</label>
+            <input type="file" accept=".zip,.mcpack,.mcaddon" required>
+        </div>
+
+        <div class="form-group">
+            <label>Imagem de Capa (Thumb)</label>
+            <input type="file" accept="image/*">
+        </div>
+
+        <button type="submit">Publicar Agora</button>
+    </form>
+
+    <div class="my-addons">
+        <h3>Seus Addons Já Publicados</h3>
+        <p style="color: #888;">Você ainda não publicou nada.</p>
     </div>
+</div>
 
-    <div id="screen-store" class="full-screen hidden">
-        <div class="mc-container" style="margin-bottom: 20px; width: 80%; display: flex; justify-content: space-between; align-items: center;">
-            <span>SALDO: <span id="balance-display" style="color: var(--gold);">0.00</span>$</span>
-            <button class="mc-btn" onclick="app.addMoney()">COLETAR DIÁRIO (+5$)</button>
-        </div>
-        <div style="display: flex; gap: 20px;">
-            <div class="mc-container" style="text-align: center; width: 200px;">
-                <h3>FREE</h3>
-                <p style="font-size: 8px;">1GB RAM</p>
-                <button class="mc-btn btn-green" onclick="app.buyPlan(0, 'FREE')">ATIVAR GRÁTIS</button>
-            </div>
-            <div class="mc-container" style="text-align: center; width: 200px;">
-                <h3 style="color: var(--gold);">PLUS</h3>
-                <p style="font-size: 8px;">8GB RAM</p>
-                <button class="mc-btn btn-green" onclick="app.buyPlan(15, 'PLUS')">COMPRAR 15$</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="screen-panel" class="layout hidden">
-        <div class="sidebar">
-            <h2 style="color: var(--emerald); font-size: 12px;">STARCAT DASH</h2>
-            <div class="nav-link active-nav" onclick="app.tab('server')">CONSOLE</div>
-            <div class="nav-link" onclick="app.tab('config')">CONFIG SERVIDOR</div>
-            <div class="nav-link" onclick="app.tab('files')">ARQUIVOS</div>
-            <div class="nav-link" style="margin-top: auto; border-color: var(--purple);" onclick="location.reload()">LOGOUT</div>
-        </div>
-
-        <div class="content">
-            <div id="tab-server">
-                <div style="display:flex; justify-content: space-between; margin-bottom: 20px;">
-                    <span>IP: <strong id="display-ip" style="color:var(--emerald)">aguardando...</strong></span>
-                    <span id="status-text" style="color: red;">● OFFLINE</span>
-                </div>
-                <div class="terminal" id="console-output"></div>
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
-                    <button class="mc-btn btn-green" onclick="app.start()">START</button>
-                    <button class="mc-btn" onclick="app.stop()">STOP</button>
-                </div>
-            </div>
-
-            <div id="tab-config" class="hidden">
-                <div class="mc-container">
-                    <h2 style="font-size: 14px;">CONFIGURAÇÕES GERAIS</h2>
-                    <label style="font-size: 9px;">SUBDOMÍNIO DO SERVIDOR:</label><br>
-                    <input type="text" id="set-ip" class="mc-input" placeholder="ex: survival.starcat">
-                    <button class="mc-btn btn-green" onclick="app.saveConfig()">SALVAR IP</button>
-                    <hr style="border: 1px solid #444; margin: 20px 0;">
-                    <label style="font-size: 9px;">VERSÃO DO JOGO:</label><br>
-                    <select class="mc-input" style="width: 100%; color: white;">
-                        <option>Paper 1.20.1</option>
-                        <option>Forge 1.12.2</option>
-                        <option>Purpur 1.20.4</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const app = {
-            user: { logged: false, balance: 0, hasPlan: false, ip: "starcat.host" },
-
-            login() {
-                const name = document.getElementById('user-input').value;
-                if (!name) return alert("Digite um nome!");
-                this.user.logged = true;
-                document.getElementById('screen-auth').classList.add('hidden');
-                document.getElementById('screen-store').classList.remove('hidden');
-            },
-
-            addMoney() {
-                this.user.balance += 5;
-                document.getElementById('balance-display').innerText = this.user.balance.toFixed(2);
-            },
-
-            buyPlan(price, name) {
-                if (this.user.balance >= price) {
-                    this.user.balance -= price;
-                    this.user.hasPlan = true;
-                    alert("Plano " + name + " ativado!");
-                    document.getElementById('screen-store').classList.add('hidden');
-                    document.getElementById('screen-panel').classList.remove('hidden');
-                    this.log("Bem-vindo ao seu novo servidor " + name);
-                } else {
-                    alert("Saldo insuficiente! Colete o bônus diário.");
-                }
-            },
-
-            tab(name) {
-                document.getElementById('tab-server').classList.add('hidden');
-                document.getElementById('tab-config').classList.add('hidden');
-                document.getElementById('tab-' + name).classList.remove('hidden');
-            },
-
-            saveConfig() {
-                const newIp = document.getElementById('set-ip').value;
-                if(newIp) {
-                    this.user.ip = newIp + ".play-mc.me";
-                    document.getElementById('display-ip').innerText = this.user.ip;
-                    alert("IP Atualizado!");
-                }
-            },
-
-            start() {
-                this.log("Verificando arquivos...");
-                setTimeout(() => {
-                    this.log("Iniciando Java com 8GB RAM...");
-                    this.log("Servidor Online em: " + this.user.ip);
-                    document.getElementById('status-text').innerText = "● ONLINE";
-                    document.getElementById('status-text').style.color = "var(--emerald)";
-                }, 1500);
-            },
-
-            stop() {
-                this.log("Salvando mundo...");
-                document.getElementById('status-text').innerText = "● OFFLINE";
-                document.getElementById('status-text').style.color = "red";
-            },
-
-            log(msg) {
-                const out = document.getElementById('console-output');
-                out.innerHTML += `<div>[${new Date().toLocaleTimeString()}] ${msg}</div>`;
-                out.scrollTop = out.scrollHeight;
-            }
-        };
-    </script>
 </body>
 </html>
