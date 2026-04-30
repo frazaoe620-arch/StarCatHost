@@ -3,95 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Addons & Texturas</title>
+    <title>Meu Site Minecraft</title>
     <style>
-        :root { --primary: #4caf50; --bg: #121212; --card: #1e1e1e; }
-        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; }
-        
-        /* Header e Busca */
-        header { background: #1f1f1f; padding: 20px; text-align: center; border-bottom: 3px solid var(--primary); }
-        .search-container { margin-top: 15px; }
-        #searchInput { 
-            width: 60%; padding: 12px; border-radius: 25px; border: none; 
-            outline: none; font-size: 16px; background: #333; color: white;
+        body {
+            background-color: #313131;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Courier New', Courier, monospace;
         }
 
-        /* Menu de Navegação */
-        nav { display: flex; justify-content: center; gap: 20px; padding: 15px; background: #181818; }
-        nav a { color: white; text-decoration: none; font-weight: bold; transition: 0.3s; }
-        nav a:hover { color: var(--primary); }
-
-        /* Grade de Conteúdo */
-        .content-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 20px; padding: 30px; 
+        .mc-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 20px;
+            color: #FFFFFF;
+            text-align: center;
+            text-decoration: none;
+            background-color: #666666;
+            
+            /* Bordas estilo Minecraft */
+            border: 4px solid #000000;
+            box-shadow: inset -4px -4px 0px #333333, 
+                        inset 4px 4px 0px #AAAAAA;
+            
+            cursor: pointer;
+            text-shadow: 2px 2px #222222;
+            image-rendering: pixelated;
         }
 
-        .card { 
-            background: var(--card); border-radius: 10px; overflow: hidden; 
-            transition: transform 0.3s; border: 1px solid #333;
+        .mc-button:active {
+            box-shadow: inset 4px 4px 0px #333333, 
+                        inset -4px -4px 0px #AAAAAA;
+            padding-top: 17px;
+            padding-bottom: 13px;
         }
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .card img { width: 100%; height: 150px; object-fit: cover; background: #000; }
-        .card-info { padding: 15px; }
-        .card-info h3 { margin: 0 0 10px 0; font-size: 18px; }
-        .tag { background: var(--primary); padding: 3px 8px; border-radius: 4px; font-size: 12px; }
-        .author { color: #888; font-size: 14px; margin-top: 10px; display: block; }
+
+        .mc-button:hover {
+            background-color: #7d7d7d;
+            border-color: #ffffff; /* Brilho de seleção */
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>MC ADDON BROWSER</h1>
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Pesquisar addons, texturas, criadores..." onkeyup="searchFunction()">
-    </div>
-</header>
-
-<nav>
-    <a href="index.html">Início</a>
-    <a href="#">Texturas</a>
-    <a href="#">Addons</a>
-    <a href="painel.html" style="color: var(--primary);">+ Publicar</a>
-    <a href="login.html">Entrar / Registro</a>
-</nav>
-
-<div class="content-grid" id="addonList">
-    <div class="card" data-title="Espadas de Esmeralda" data-type="addon">
-        <img src="https://via.placeholder.com/300x150" alt="Capa">
-        <div class="card-info">
-            <span class="tag">Addon</span>
-            <h3>Espadas de Esmeralda</h3>
-            <span class="author">Por: @SteveMaster</span>
-        </div>
-    </div>
-
-    <div class="card" data-title="Textura Ultra HD" data-type="texture">
-        <img src="https://via.placeholder.com/300x150" alt="Capa">
-        <div class="card-info">
-            <span class="tag">Textura</span>
-            <h3>Textura Ultra HD</h3>
-            <span class="author">Por: @AlexBuilds</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    function searchFunction() {
-        let input = document.getElementById('searchInput').value.toLowerCase();
-        let cards = document.getElementsByClassName('card');
-
-        for (let i = 0; i < cards.size; i++) {
-            let title = cards[i].getAttribute('data-title').toLowerCase();
-            if (title.includes(input)) {
-                cards[i].style.display = "";
-            } else {
-                cards[i].style.display = "none";
-            }
-        }
-    }
-</script>
+    <a href="#" class="mc-button">JOGAR</a>
 
 </body>
 </html>
