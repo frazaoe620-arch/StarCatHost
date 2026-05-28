@@ -1,18 +1,245 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Meu Site de Pintura</title>
-</head>
-<body>
-    <h1>Bem-vindo ao Site de Pintura!</h1>
-    <p>Escolha uma das opções abaixo:</p>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <nav>
-        <ul>
-            <li><a href="pintar.html">Ir para a Área de Pintar</a></li>
-            <li><a href="editar.html">Ir para a Área de Editar</a></li>
-        </ul>
-    </nav>
+<title>Star Maker Loading</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    background:
+    radial-gradient(circle at top,
+    #303030 0%,
+    #131313 45%,
+    #090909 100%);
+
+    font-family:'Press Start 2P', cursive;
+
+    image-rendering:pixelated;
+
+    color:white;
+}
+
+/* STARS */
+
+.stars{
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+}
+
+.star{
+    position:absolute;
+
+    width:4px;
+    height:4px;
+
+    background:white;
+
+    border-radius:50%;
+
+    animation:
+    glow 2s infinite ease-in-out,
+    floatStar linear infinite;
+}
+
+@keyframes glow{
+
+    50%{
+        opacity:.25;
+    }
+}
+
+@keyframes floatStar{
+
+    from{
+        transform:translateY(0);
+    }
+
+    to{
+        transform:translateY(-120vh);
+    }
+}
+
+/* LOGO */
+
+.logo{
+
+    position:relative;
+
+    z-index:2;
+
+    margin-bottom:55px;
+}
+
+.logo h1{
+
+    font-size:58px;
+
+    text-shadow:
+    0 0 18px rgba(255,255,255,.7),
+    0 0 42px rgba(120,120,255,.6),
+    6px 6px 0 #000;
+
+    animation:pulse 2s infinite;
+}
+
+.logo span{
+
+    position:absolute;
+
+    top:-16px;
+    right:-22px;
+
+    font-size:12px;
+
+    color:#ffe66d;
+}
+
+@keyframes pulse{
+
+    50%{
+        transform:scale(1.05);
+    }
+}
+
+/* LOADING */
+
+.loading-box{
+
+    width:420px;
+    height:36px;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    border:5px solid #000;
+
+    background:#101010;
+
+    box-shadow:
+    0 12px 35px rgba(0,0,0,.8);
+}
+
+.loading-bar{
+
+    width:0%;
+    height:100%;
+
+    background:
+    linear-gradient(
+    90deg,
+    #7b7bff,
+    #9d6cff,
+    #7b7bff);
+
+    animation:loading 4s forwards;
+}
+
+@keyframes loading{
+
+    to{
+        width:100%;
+    }
+}
+
+.loading-text{
+
+    margin-top:20px;
+
+    font-size:10px;
+
+    letter-spacing:2px;
+
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+
+    50%{
+        opacity:.4;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="logo">
+
+    <h1>STAR MAKER</h1>
+
+    <span>v2</span>
+
+</div>
+
+<div class="loading-box">
+
+    <div class="loading-bar"></div>
+
+</div>
+
+<div class="loading-text">
+    CARREGANDO SISTEMA...
+</div>
+
+<script>
+
+/* STARS */
+
+const stars =
+document.getElementById('stars');
+
+for(let i = 0; i < 100; i++){
+
+    const star =
+    document.createElement('div');
+
+    star.classList.add('star');
+
+    star.style.left =
+    Math.random() * 100 + 'vw';
+
+    star.style.top =
+    Math.random() * 100 + 'vh';
+
+    star.style.animationDuration =
+    (Math.random() * 10 + 6) + 's';
+
+    stars.appendChild(star);
+}
+
+/* REDIRECT */
+
+setTimeout(()=>{
+
+    window.location.href = "painel.html";
+
+},4500);
+
+</script>
+
 </body>
 </html>
