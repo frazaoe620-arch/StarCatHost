@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Star Maker Panel</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    min-height:100vh;
+
+    overflow:hidden;
+
+    font-family:'Press Start 2P', cursive;
+
+    image-rendering:pixelated;
+
+    background:
+    radial-gradient(circle at top,
+    #303030 0%,
+    #131313 45%,
+    #090909 100%);
+
+    color:white;
+}
+
+/* HOME */
+
+.home{
+
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.title{
+
+    font-size:42px;
+
+    margin-bottom:45px;
+
+    text-shadow:
+    0 0 18px rgba(255,255,255,.5),
+    5px 5px 0 #000;
+}
+
+/* OPEN BUTTON */
+
+.plus-btn{
+
+    width:180px;
+    height:180px;
+
+    border:none;
+
+    border-radius:42px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:90px;
+
+    background:
+    linear-gradient(
+    to bottom,
+    #8f8fff,
+    #6f6fff,
+    #4b4bff);
+
+    box-shadow:
+    inset 0 6px 0 rgba(255,255,255,.22),
+    inset 0 -6px 0 rgba(0,0,0,.45),
+    0 16px 45px rgba(0,0,0,.8),
+    0 0 40px rgba(122,122,255,.6);
+
+    transition:.15s;
+}
+
+.plus-btn:hover{
+
+    transform:translateY(-5px) scale(1.04);
+}
+
+.plus-btn:active{
+
+    transform:translateY(5px);
+}
+
+/* SLIDER */
+
+.panel-slider{
+
+    position:fixed;
+
+    left:0;
+    right:0;
+    bottom:-100%;
+
+    height:88vh;
+
+    padding:22px;
+
+    overflow:auto;
+
+    border-top-left-radius:36px;
+    border-top-right-radius:36px;
+
+    background:
+    linear-gradient(
+    to bottom,
+    rgba(25,25,25,.98),
+    rgba(10,10,10,.98));
+
+    border-top:6px solid #000;
+
+    box-shadow:
+    0 -10px 50px rgba(0,0,0,.9);
+
+    transition:.45s cubic-bezier(.2,.9,.2,1);
+}
+
+.panel-slider.active{
+
+    bottom:0;
+}
+
+.slider-bar{
+
+    width:140px;
+    height:12px;
+
+    border-radius:999px;
+
+    background:#777;
+
+    margin:auto;
+    margin-bottom:24px;
+}
+
+/* TOP */
+
+.menu-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:24px;
+}
+
+.menu-title{
+
+    font-size:22px;
+
+    text-shadow:4px 4px 0 #000;
+}
+
+.close-btn{
+
+    width:58px;
+    height:58px;
+
+    border:none;
+
+    border-radius:16px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:18px;
+
+    background:
+    linear-gradient(
+    to bottom,
+    #ff7c7c,
+    #ff4d4d);
+
+    box-shadow:
+    inset 0 4px 0 rgba(255,255,255,.2),
+    inset 0 -4px 0 rgba(0,0,0,.4);
+}
+
+/* TOP ACTIONS */
+
+.top-actions{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
+
+    margin-bottom:24px;
+}
+
+.top-action-btn{
+
+    height:110px;
+
+    border:none;
+
+    border-radius:24px;
+
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+
+    gap:18px;
+
+    padding:18px;
+
+    position:relative;
+
+    overflow:hidden;
+
+    transition:.15s;
+
+    box-shadow:
+    inset 0 5px 0 rgba(255,255,255,.15),
+    inset 0 -5px 0 rgba(0,0,0,.45),
+    0 12px 30px rgba(0,0,0,.5);
+}
+
+.top-action-btn:hover{
+
+    transform:translateY(-4px);
+}
+
+.top-action-btn:active{
+
+    transform:translateY(4px);
+}
+
+.texture-btn{
+
+    background:
+    linear-gradient(
+    135deg,
+    #6555ff,
+    #4638ff);
+}
+
+.addon-btn{
+
+    background:
+    linear-gradient(
+    135deg,
+    #1dc85d,
+    #149d48);
+}
+
+.top-icon{
+
+    width:58px;
+    height:58px;
+
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+
+    image-rendering:pixelated;
+}
+
+.texture-icon{
+
+background-image:url('https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19/assets/minecraft/textures/item/painting.png');
+
+}
+
+.addon-icon{
+
+background-image:url('https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19/assets/minecraft/textures/item/writable_book.png');
+
+}
+
+.top-btn-content{
+
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+.top-badge{
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    margin-bottom:10px;
+
+    font-size:7px;
+
+    background:rgba(255,255,255,.15);
+}
+
+.top-title{
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    text-shadow:2px 2px 0 #000;
+}
+
+.top-sub{
+
+    margin-top:10px;
+
+    font-size:8px;
+
+    line-height:1.5;
+
+    opacity:.9;
+
+    text-shadow:2px 2px 0 #000;
+}
+
+/* GRID */
+
+.tools-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:18px;
+}
+
+.mc-btn-square{
+
+    aspect-ratio:1/1;
+
+    border:none;
+
+    border-radius:22px;
+
+    cursor:pointer;
+
+    color:white;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    linear-gradient(
+    to bottom,
+    #8d8d8d,
+    #717171,
+    #555555);
+
+    box-shadow:
+    inset 0 5px 0 rgba(255,255,255,.18),
+    inset 0 -5px 0 rgba(0,0,0,.45),
+    0 10px 26px rgba(0,0,0,.7);
+
+    transition:.15s;
+}
+
+.mc-btn-square:hover{
+
+    transform:translateY(-4px);
+}
+
+.mc-btn-square:active{
+
+    transform:translateY(4px);
+}
+
+.icon{
+
+    width:58px;
+    height:58px;
+
+    margin-bottom:14px;
+
+    background-size:contain;
+    background-repeat:no-repeat;
+    background-position:center;
+}
+
+.icon-manifest{
+
+background-image:url('https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.19/assets/minecraft/textures/item/writable_book.png');
+
+}
+
+.mc-btn-square span{
+
+    font-size:10px;
+
+    text-shadow:2px 2px 0 #000;
+}
+
+@media(max-width:900px){
+
+    .tools-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .top-actions{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="home">
+
+    <div class="title">
+        STAR MAKER
+    </div>
+
+    <button class="plus-btn" id="openPanel">
+        ➕
+    </button>
+
+</div>
+
+<div class="panel-slider" id="panel">
+
+    <div class="slider-bar"></div>
+
+    <div class="menu-top">
+
+        <div class="menu-title">
+            Minecraft Tools
+        </div>
+
+        <button class="close-btn" id="closePanel">
+            ✕
+        </button>
+
+    </div>
+
+    <div class="top-actions">
+
+        <button class="top-action-btn texture-btn">
+
+            <div class="top-icon texture-icon"></div>
+
+            <div class="top-btn-content">
+
+                <span class="top-badge">
+                    RESOURCE PACK
+                </span>
+
+                <span class="top-title">
+                    Criar Texture Pack
+                </span>
+
+                <span class="top-sub">
+                    UI • Blocos • Partículas
+                </span>
+
+            </div>
+
+        </button>
+
+        <button class="top-action-btn addon-btn">
+
+            <div class="top-icon addon-icon"></div>
+
+            <div class="top-btn-content">
+
+                <span class="top-badge">
+                    BEHAVIOR PACK
+                </span>
+
+                <span class="top-title">
+                    Criar Addon
+                </span>
+
+                <span class="top-sub">
+                    Scripts • API • Entidades
+                </span>
+
+            </div>
+
+        </button>
+
+    </div>
+
+    <div class="tools-grid">
+
+        <button
+        class="mc-btn-square"
+        onclick="window.location.href='manifest.html'">
+
+            <div class="icon icon-manifest"></div>
+
+            <span>Manifest</span>
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const panel =
+document.getElementById('panel');
+
+document
+.getElementById('openPanel')
+.onclick = ()=>{
+
+    panel.classList.add('active');
+};
+
+document
+.getElementById('closePanel')
+.onclick = ()=>{
+
+    panel.classList.remove('active');
+};
+
+</script>
+
+</body>
+</html>
