@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Manifest Generator</title>
+<title>Star Maker • Manifest Generator</title>
 
 <style>
 
@@ -22,47 +22,128 @@ body{
 
     padding:28px;
 
-    background:
-    radial-gradient(circle at top,
-    #2f2f2f 0%,
-    #151515 45%,
-    #090909 100%);
+    overflow-x:hidden;
 
     font-family:'Press Start 2P', cursive;
+
+    image-rendering:pixelated;
+
+    background:
+    radial-gradient(circle at top,
+    #363636 0%,
+    #181818 45%,
+    #090909 100%);
 
     color:white;
 }
 
+/* ================================= */
+/* CONTAINER */
+/* ================================= */
+
 .container{
 
     width:100%;
-    max-width:1000px;
+    max-width:1250px;
 
     margin:auto;
 
-    padding:28px;
+    border-radius:34px;
 
-    border-radius:30px;
+    border:6px solid #000;
 
     background:
     linear-gradient(
     to bottom,
     rgba(30,30,30,.98),
-    rgba(12,12,12,.98));
+    rgba(10,10,10,.98));
 
-    border:6px solid #000;
+    padding:28px;
 
     box-shadow:
-    0 20px 60px rgba(0,0,0,.8);
+    0 20px 70px rgba(0,0,0,.85);
+}
+
+/* ================================= */
+/* TOP */
+/* ================================= */
+
+.top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:32px;
 }
 
 .title{
 
     font-size:24px;
 
-    margin-bottom:30px;
+    line-height:1.5;
 
-    text-shadow:4px 4px 0 #000;
+    text-shadow:
+    4px 4px 0 #000,
+    0 0 18px rgba(255,255,255,.2);
+}
+
+.subtitle{
+
+    margin-top:12px;
+
+    font-size:9px;
+
+    opacity:.85;
+
+    color:#cfcfcf;
+}
+
+.back-btn{
+
+    width:64px;
+    height:64px;
+
+    border:none;
+
+    border-radius:18px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:22px;
+
+    background:
+    linear-gradient(
+    to bottom,
+    #ff7d7d,
+    #ff4747);
+
+    box-shadow:
+    inset 0 4px 0 rgba(255,255,255,.2),
+    inset 0 -4px 0 rgba(0,0,0,.45),
+    0 10px 24px rgba(0,0,0,.45);
+}
+
+/* ================================= */
+/* FORM */
+/* ================================= */
+
+.section{
+
+    margin-bottom:28px;
+}
+
+.section-title{
+
+    margin-bottom:20px;
+
+    font-size:12px;
+
+    color:#ffe66d;
+
+    text-shadow:2px 2px 0 #000;
 }
 
 .form-grid{
@@ -86,39 +167,76 @@ body{
 
     font-size:10px;
 
-    color:#ffe66d;
+    color:#ffffff;
 }
 
+/* ================================= */
+/* INPUTS */
+/* ================================= */
+
 .input,
-.select{
+.select,
+.textarea{
 
     width:100%;
-    height:60px;
 
     border:none;
 
     border-radius:18px;
 
-    padding:14px;
-
     color:white;
+
+    padding:16px;
 
     background:
     linear-gradient(
     to bottom,
-    #393939,
-    #262626);
+    #3b3b3b,
+    #252525);
 
     font-family:'Press Start 2P', cursive;
+
+    box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.08),
+    inset 0 -3px 0 rgba(0,0,0,.35);
+
+    outline:none;
+}
+
+.input,
+.select{
+
+    height:62px;
+
     font-size:10px;
 }
 
-.generate-btn{
+.textarea{
 
-    width:100%;
-    height:68px;
+    min-height:120px;
 
-    margin-top:30px;
+    resize:vertical;
+
+    font-size:10px;
+
+    line-height:1.8;
+}
+
+/* ================================= */
+/* BUTTONS */
+/* ================================= */
+
+.button-row{
+
+    display:flex;
+    gap:18px;
+
+    flex-wrap:wrap;
+}
+
+.action-btn{
+
+    height:64px;
 
     border:none;
 
@@ -126,51 +244,185 @@ body{
 
     cursor:pointer;
 
+    padding:0 26px;
+
     color:white;
 
-    font-size:11px;
+    font-size:10px;
 
     font-family:'Press Start 2P', cursive;
+
+    transition:.15s;
+
+    box-shadow:
+    inset 0 4px 0 rgba(255,255,255,.15),
+    inset 0 -4px 0 rgba(0,0,0,.45),
+    0 10px 24px rgba(0,0,0,.5);
+}
+
+.action-btn:hover{
+
+    transform:translateY(-3px);
+}
+
+.action-btn:active{
+
+    transform:translateY(3px);
+}
+
+.generate-btn{
 
     background:
     linear-gradient(
     to bottom,
     #7a7aff,
-    #5f5fff);
+    #5656ff);
+}
+
+.add-btn{
+
+    background:
+    linear-gradient(
+    to bottom,
+    #1fd16b,
+    #14964c);
+}
+
+.remove-btn{
+
+    background:
+    linear-gradient(
+    to bottom,
+    #ff8c5f,
+    #ff5f2a);
+}
+
+/* ================================= */
+/* SETTINGS CARD */
+/* ================================= */
+
+.settings-container{
+
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.setting-card{
+
+    padding:20px;
+
+    border-radius:24px;
+
+    background:
+    linear-gradient(
+    to bottom,
+    rgba(50,50,50,.9),
+    rgba(28,28,28,.9));
+
+    border:3px solid rgba(255,255,255,.05);
 
     box-shadow:
-    inset 0 4px 0 rgba(255,255,255,.2),
-    inset 0 -4px 0 rgba(0,0,0,.4),
-    0 10px 25px rgba(0,0,0,.5);
+    inset 0 3px 0 rgba(255,255,255,.06),
+    inset 0 -3px 0 rgba(0,0,0,.35),
+    0 10px 24px rgba(0,0,0,.35);
 }
+
+.setting-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:18px;
+}
+
+.setting-title{
+
+    font-size:10px;
+
+    color:#ffe66d;
+}
+
+.small-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:16px;
+}
+
+.option-list{
+
+    margin-top:18px;
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.option-item{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:12px;
+}
+
+/* ================================= */
+/* OUTPUT */
+/* ================================= */
 
 .output{
 
     width:100%;
-    min-height:320px;
 
-    margin-top:24px;
+    min-height:500px;
+
+    margin-top:28px;
 
     border:none;
 
-    border-radius:20px;
+    border-radius:24px;
 
-    padding:18px;
+    resize:vertical;
 
-    resize:none;
+    padding:22px;
 
-    background:#080808;
+    background:#090909;
 
     color:#7dff9f;
 
-    font-family:monospace;
     font-size:12px;
+
+    line-height:1.8;
+
+    font-family:monospace;
+
+    box-shadow:
+    inset 0 0 0 3px rgba(255,255,255,.03);
 }
 
-@media(max-width:900px){
+/* ================================= */
+/* RESPONSIVE */
+/* ================================= */
 
-    .form-grid{
+@media(max-width:1000px){
+
+    .form-grid,
+    .small-grid,
+    .option-item{
+
         grid-template-columns:1fr;
+    }
+
+    .top{
+
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
     }
 }
 
@@ -181,72 +433,241 @@ body{
 
 <div class="container">
 
-    <div class="title">
-        Manifest Generator
-    </div>
+    <!-- TOP -->
 
-    <div class="form-grid">
+    <div class="top">
 
-        <div class="form-group">
+        <div>
 
-            <label>Addon Name</label>
+            <div class="title">
+                STAR MAKER
+            </div>
 
-            <input
-            type="text"
-            class="input"
-            id="addonName"
-            value="Star Addon">
+            <div class="subtitle">
+                MANIFEST GENERATOR • RESOURCE PACK • ADDON • SETTINGS API
+            </div>
 
         </div>
 
-        <div class="form-group">
-
-            <label>Description</label>
-
-            <input
-            type="text"
-            class="input"
-            id="addonDescription"
-            value="Generated by Star Maker">
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Manifest Type</label>
-
-            <select
-            class="select"
-            id="manifestType">
-
-                <option>Manifest Behavior</option>
-                <option>Manifest Resource</option>
-
-            </select>
-
-        </div>
-
-        <div class="form-group">
-
-            <label>Module Type</label>
-
-            <select
-            class="select"
-            id="moduleType">
-
-                <option>data</option>
-                <option>resources</option>
-                <option>script</option>
-
-            </select>
-
-        </div>
+        <button
+        class="back-btn"
+        onclick="window.location.href='painel.html'">
+            ✕
+        </button>
 
     </div>
 
-    <button class="generate-btn" id="generateManifest">
-        GENERATE MANIFEST
-    </button>
+    <!-- HEADER -->
+
+    <div class="section">
+
+        <div class="section-title">
+            HEADER
+        </div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Pack Name</label>
+
+                <input
+                type="text"
+                class="input"
+                id="packName"
+                value="Star Client">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Description</label>
+
+                <input
+                type="text"
+                class="input"
+                id="packDescription"
+                value="Generated by Star Maker">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Format Version</label>
+
+                <select
+                class="select"
+                id="formatVersion">
+
+                    <option>3</option>
+                    <option>2</option>
+                    <option>1</option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Pack Type</label>
+
+                <select
+                class="select"
+                id="moduleType">
+
+                    <option>resources</option>
+                    <option>data</option>
+                    <option>script</option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Version</label>
+
+                <input
+                type="text"
+                class="input"
+                id="version"
+                value="1.0.0">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Min Engine Version</label>
+
+                <input
+                type="text"
+                class="input"
+                id="engineVersion"
+                value="1.21.100">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Author</label>
+
+                <input
+                type="text"
+                class="input"
+                id="author"
+                value="MisterCat">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Capabilities</label>
+
+                <select
+                class="select"
+                id="capability">
+
+                    <option>pbr</option>
+                    <option>raytraced</option>
+                    <option>chemistry</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SUBPACKS -->
+
+    <div class="section">
+
+        <div class="section-title">
+            SUBPACKS
+        </div>
+
+        <textarea
+        class="textarea"
+        id="subpacks">
+
+[
+  {
+    "folder_name": "1_",
+    "memory_performance_tier": 0,
+    "name": "Low Experience"
+  },
+  {
+    "folder_name": "2_",
+    "memory_performance_tier": 0,
+    "name": "Full Experience"
+  }
+]
+
+        </textarea>
+
+    </div>
+
+    <!-- SETTINGS -->
+
+    <div class="section">
+
+        <div class="section-title">
+            SETTINGS GENERATOR
+        </div>
+
+        <div class="button-row">
+
+            <button
+            class="action-btn add-btn"
+            id="addDropdown">
+
+                + DROPDOWN
+
+            </button>
+
+            <button
+            class="action-btn add-btn"
+            id="addToggle">
+
+                + TOGGLE
+
+            </button>
+
+            <button
+            class="action-btn add-btn"
+            id="addSlider">
+
+                + SLIDER
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- SETTINGS LIST -->
+
+    <div
+    class="settings-container"
+    id="settingsContainer"></div>
+
+    <!-- GENERATE -->
+
+    <div class="section">
+
+        <button
+        class="action-btn generate-btn"
+        style="width:100%;height:72px"
+        id="generateManifest">
+
+            GENERATE MANIFEST.JSON
+
+        </button>
+
+    </div>
+
+    <!-- OUTPUT -->
 
     <textarea
     class="output"
@@ -255,6 +676,10 @@ body{
 </div>
 
 <script>
+
+/* ================================= */
+/* UUID */
+/* ================================= */
 
 function uuidv4(){
 
@@ -273,53 +698,399 @@ function uuidv4(){
     });
 }
 
+/* ================================= */
+/* SETTINGS */
+/* ================================= */
+
+const settingsContainer =
+document.getElementById('settingsContainer');
+
+/* ADD DROPDOWN */
+
+document
+.getElementById('addDropdown')
+.onclick = ()=>{
+
+    const div =
+    document.createElement('div');
+
+    div.className =
+    'setting-card';
+
+    div.innerHTML = `
+
+        <div class="setting-top">
+
+            <div class="setting-title">
+                DROPDOWN
+            </div>
+
+            <button class="action-btn remove-btn removeSetting">
+                REMOVE
+            </button>
+
+        </div>
+
+        <div class="small-grid">
+
+            <div class="form-group">
+
+                <label>Text</label>
+
+                <input type="text" class="input settingText" value="Setting Text">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Name</label>
+
+                <input type="text" class="input settingName" value="star:setting">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Default</label>
+
+                <input type="text" class="input settingDefault" value="enabled">
+
+            </div>
+
+        </div>
+
+        <div class="option-list">
+
+            <div class="option-item">
+
+                <input type="text" class="input optionName" value="enabled">
+
+                <input type="text" class="input optionText" value="Enabled">
+
+            </div>
+
+            <div class="option-item">
+
+                <input type="text" class="input optionName" value="disabled">
+
+                <input type="text" class="input optionText" value="Disabled">
+
+            </div>
+
+        </div>
+    `;
+
+    settingsContainer.appendChild(div);
+
+    bindRemove();
+};
+
+/* ADD TOGGLE */
+
+document
+.getElementById('addToggle')
+.onclick = ()=>{
+
+    const div =
+    document.createElement('div');
+
+    div.className =
+    'setting-card';
+
+    div.innerHTML = `
+
+        <div class="setting-top">
+
+            <div class="setting-title">
+                TOGGLE
+            </div>
+
+            <button class="action-btn remove-btn removeSetting">
+                REMOVE
+            </button>
+
+        </div>
+
+        <div class="small-grid">
+
+            <div class="form-group">
+
+                <label>Text</label>
+
+                <input type="text" class="input settingText" value="Toggle Setting">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Name</label>
+
+                <input type="text" class="input settingName" value="star:toggle">
+
+            </div>
+
+        </div>
+
+    `;
+
+    settingsContainer.appendChild(div);
+
+    bindRemove();
+};
+
+/* ADD SLIDER */
+
+document
+.getElementById('addSlider')
+.onclick = ()=>{
+
+    const div =
+    document.createElement('div');
+
+    div.className =
+    'setting-card';
+
+    div.innerHTML = `
+
+        <div class="setting-top">
+
+            <div class="setting-title">
+                SLIDER
+            </div>
+
+            <button class="action-btn remove-btn removeSetting">
+                REMOVE
+            </button>
+
+        </div>
+
+        <div class="small-grid">
+
+            <div class="form-group">
+
+                <label>Text</label>
+
+                <input type="text" class="input settingText" value="Slider Setting">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Name</label>
+
+                <input type="text" class="input settingName" value="star:slider">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Min</label>
+
+                <input type="number" class="input sliderMin" value="0">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Max</label>
+
+                <input type="number" class="input sliderMax" value="100">
+
+            </div>
+
+        </div>
+
+    `;
+
+    settingsContainer.appendChild(div);
+
+    bindRemove();
+};
+
+/* REMOVE */
+
+function bindRemove(){
+
+    document
+    .querySelectorAll('.removeSetting')
+    .forEach(btn=>{
+
+        btn.onclick = ()=>{
+
+            btn
+            .closest('.setting-card')
+            .remove();
+        };
+    });
+}
+
+/* ================================= */
+/* GENERATE */
+/* ================================= */
+
 document
 .getElementById('generateManifest')
 .onclick = ()=>{
 
-    const name =
-    document.getElementById('addonName').value;
+    const settings = [];
 
-    const description =
-    document.getElementById('addonDescription').value;
+    document
+    .querySelectorAll('.setting-card')
+    .forEach(card=>{
 
-    const moduleType =
-    document.getElementById('moduleType').value;
+        const title =
+        card
+        .querySelector('.setting-title')
+        .innerText;
+
+        const text =
+        card
+        .querySelector('.settingText')
+        ?.value || "";
+
+        const name =
+        card
+        .querySelector('.settingName')
+        ?.value || "";
+
+        /* DROPDOWN */
+
+        if(title === 'DROPDOWN'){
+
+            const options = [];
+
+            const optionNames =
+            card.querySelectorAll('.optionName');
+
+            const optionTexts =
+            card.querySelectorAll('.optionText');
+
+            optionNames.forEach((opt,index)=>{
+
+                options.push({
+
+                    name:opt.value,
+
+                    text:optionTexts[index].value
+                });
+            });
+
+            settings.push({
+
+                type:"dropdown",
+
+                text:text,
+
+                name:name,
+
+                default:
+                card.querySelector('.settingDefault').value,
+
+                options:options
+            });
+        }
+
+        /* TOGGLE */
+
+        if(title === 'TOGGLE'){
+
+            settings.push({
+
+                type:"toggle",
+
+                text:text,
+
+                name:name,
+
+                default:true
+            });
+        }
+
+        /* SLIDER */
+
+        if(title === 'SLIDER'){
+
+            settings.push({
+
+                type:"slider",
+
+                text:text,
+
+                name:name,
+
+                min:Number(
+                card.querySelector('.sliderMin').value),
+
+                max:Number(
+                card.querySelector('.sliderMax').value),
+
+                default:50
+            });
+        }
+    });
 
     const manifest = {
 
-        format_version:2,
+        format_version:Number(
+        document.getElementById('formatVersion').value),
 
         header:{
 
-            name:name,
+            description:
+            document.getElementById('packDescription').value,
 
-            description:description,
+            name:
+            document.getElementById('packName').value,
 
             uuid:uuidv4(),
 
-            version:[1,0,0],
+            version:
+            document.getElementById('version').value,
 
-            min_engine_version:[1,21,100]
+            min_engine_version:
+            document.getElementById('engineVersion').value
         },
 
         modules:[
 
             {
 
-                type:moduleType,
+                description:"Generated by Star Maker",
+
+                type:
+                document.getElementById('moduleType').value,
 
                 uuid:uuidv4(),
 
-                version:[1,0,0]
+                version:
+                document.getElementById('version').value
             }
-        ]
+        ],
+
+        capabilities:[
+
+            document.getElementById('capability').value
+        ],
+
+        metadata:{
+
+            authors:[
+
+                document.getElementById('author').value
+            ]
+        },
+
+        subpacks:
+        JSON.parse(
+        document.getElementById('subpacks').value),
+
+        settings:settings
     };
 
     document
     .getElementById('manifestOutput')
     .value =
-    JSON.stringify(manifest,null,4);
+    JSON.stringify(manifest,null,2);
 };
 
 </script>
