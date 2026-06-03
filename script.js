@@ -1,24 +1,24 @@
+// Loading
 
-function handleAuth() {
-    const user = document.getElementById('user').value;
-    if(user !== "") {
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        addLog("Bem-vindo à StarCatHost, " + user);
+setTimeout(() => {
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("app").style.display = "block";
+
+}, 3000);
+
+// Tema
+
+const btn = document.getElementById("themeBtn");
+
+btn.onclick = () => {
+
+    document.body.classList.toggle("light");
+
+    if(document.body.classList.contains("light")){
+        btn.innerHTML = "☀️";
+    }else{
+        btn.innerHTML = "🌙";
     }
-}
 
-function startServer() {
-    addLog("Iniciando processo Java...");
-    setTimeout(() => {
-        document.getElementById('status-tag').style.color = "#55FF55";
-        document.getElementById('status-tag').innerText = "● ONLINE";
-        addLog("Servidor pronto para jogadores!");
-    }, 1500);
-}
-
-function addLog(msg) {
-    const console = document.getElementById('console');
-    console.innerHTML += `<p>> ${msg}</p>`;
-    console.scrollTop = console.scrollHeight;
-}
+};
