@@ -2,105 +2,584 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StarCat Addon Maker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StarMusic Pro Max Ultra</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
 
-<link rel="stylesheet" href="style.css">
+body {
+    background: #0b0b0e;
+    color: #f3f4f6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0b0b0e; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #1db954; }
+
+.app { display: flex; flex: 1; overflow: hidden; }
+
+/* Sidebar lateral */
+.sidebar {
+    width: 320px;
+    background: #121214;
+    padding: 24px;
+    overflow-y: auto;
+    border-right: 1px solid #1f1f23;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1db954;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-shadow: 0 0 20px rgba(29, 185, 84, 0.3);
+}
+
+.input-group { display: flex; flex-direction: column; gap: 8px; }
+
+input[type="text"], select {
+    width: 100%; padding: 12px 16px; background: #1a1a1e;
+    border: 1px solid #2d2d34; border-radius: 8px; color: #fff;
+    font-size: 14px; transition: all 0.3s ease;
+}
+
+input[type="text"]:focus, select:focus {
+    outline: none; border-color: #1db954;
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+input[type="file"] { display: none; }
+
+.file-label {
+    display: block; text-align: center; padding: 12px;
+    background: #1a1a1e; border: 1px dashed #4b5563;
+    border-radius: 8px; cursor: pointer; font-size: 14px; color: #9ca3af;
+}
+.file-label:hover { border-color: #1db954; color: #fff; }
+
+button {
+    width: 100%; padding: 12px; background: #1db954; color: #fff;
+    font-weight: 700; font-size: 14px; border: none; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+button:hover { background: #1ed760; transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+
+.btn-danger { background: #ef4444; width: auto; padding: 8px 12px; font-size: 12px; border-radius: 6px; }
+.btn-danger:hover { background: #dc2626; }
+
+.playlist-container { flex: 1; overflow-y: auto; margin-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+
+.playlist {
+    background: #1a1a1e; padding: 14px; border-radius: 8px;
+    cursor: pointer; border: 1px solid transparent; display: flex; justify-content: space-between; align-items: center;
+}
+.playlist:hover { background: #222227; border-color: #2d2d34; }
+.playlist.active { border-color: #1db954; background: rgba(29, 185, 84, 0.1); }
+.playlist-info small { color: #9ca3af; display: block; margin-top: 4px; }
+
+/* Área Principal */
+.main {
+    flex: 1; padding: 32px; overflow-y: auto;
+    background: linear-gradient(180deg, #16161a 0%, #0b0b0e 100%);
+}
+
+h2 { font-size: 28px; font-weight: 800; margin-bottom: 24px; }
+
+.forms-container { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+
+.song {
+    background: rgba(26, 26, 30, 0.6); padding: 16px 20px;
+    border-radius: 12px; display: flex; justify-content: space-between;
+    align-items: center; border: 1px solid #1f1f23; margin-bottom: 8px;
+}
+.song:hover { background: rgba(34, 34, 39, 0.8); border-color: #2d2d34; }
+.song-actions { display: flex; gap: 10px; align-items: center; }
+.song-actions button { width: 40px; height: 40px; border-radius: 50%; padding: 0; }
+.song.playing { border-color: #1db954; }
+.song.playing b { color: #1db954; }
+
+/* Player Profissional */
+.player {
+    background: #121214; padding: 15px 32px;
+    border-top: 1px solid #1f1f23; display: flex; flex-direction: column;
+    align-items: center; gap: 10px; position: relative;
+}
+
+#nowPlaying { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 5px; }
+
+.visualizer-container {
+    width: 100%; max-width: 800px; height: 60px;
+    background: transparent; border-radius: 8px; overflow: hidden;
+}
+canvas { width: 100%; height: 100%; display: block; }
+
+.custom-controls {
+    width: 100%; max-width: 800px;
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+}
+
+.main-buttons { display: flex; gap: 20px; align-items: center; }
+.main-buttons button { width: 45px; height: 45px; border-radius: 50%; background: #1a1a1e; color: #fff; font-size: 16px; }
+.main-buttons button:hover { background: #1db954; }
+.main-buttons button.play-btn { width: 55px; height: 55px; background: #fff; color: #000; font-size: 20px; }
+.main-buttons button.play-btn:hover { background: #1db954; transform: scale(1.05); }
+
+.progress-container { width: 100%; display: flex; align-items: center; gap: 15px; font-size: 12px; color: #9ca3af; }
+
+input[type="range"] { -webkit-appearance: none; background: transparent; width: 100%; cursor: pointer; height: 4px; border-radius: 4px; }
+input[type="range"]::-webkit-slider-runnable-track { background: #4b5563; height: 4px; border-radius: 4px; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; background: #fff; border-radius: 50%; margin-top: -4px; transition: 0.1s; }
+input[type="range"]:hover::-webkit-slider-thumb { background: #1db954; transform: scale(1.2); }
+
+.volume-container { position: absolute; right: 32px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 10px; width: 120px; font-size: 18px; }
+
+.preview-card {
+    width: 100%; max-width: 400px; background: #1a1a1e; border: 1px solid #1db954;
+    border-radius: 12px; padding: 20px; margin-bottom: 30px; display: none;
+}
+</style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading">
-    <div class="loading-box">
-        <h1>★ StarCat ★</h1>
-        <div class="loading-bar">
-            <div class="loading-progress"></div>
-        </div>
-        <p>Carregando Addon Maker...</p>
-    </div>
-</div>
+<div class="app">
 
-<!-- APP -->
-<div id="app">
-
-<header class="topbar">
-    <div class="logo">
-        ★ StarCat Addon Maker
-    </div>
-
-    <button id="themeBtn">
-        🌙
-    </button>
-</header>
-
-<section class="hero">
-
-    <div class="profile-card">
-
-        <div class="avatar">
-            🐱
+    <div class="sidebar">
+        <div class="logo">🎵 StarMusic</div>
+        
+        <div class="input-group">
+            <input id="playlistName" placeholder="Nome da nova playlist" type="text">
+            <button onclick="createPlaylist()">➕ Criar Playlist</button>
         </div>
 
-        <h2>MisterCat</h2>
+        <div class="playlist-container" id="playlistList"></div>
+    </div>
 
-        <p>Addon Developer</p>
+    <div class="main">
+        <h2 id="currentPlaylistName">Carregando...</h2>
+        
+        <div class="forms-container">
+            <div class="input-group" style="width: 100%; max-width: 350px;">
+                <span style="font-size: 13px; color: #9ca3af; font-weight: 600;">📁 Upload Local (Fica Salvo)</span>
+                <label for="musicFile" class="file-label" id="fileLabel">📁 Escolher arquivo de áudio</label>
+                <input type="file" id="musicFile" accept="audio/*" onchange="updateFileName()">
+                <input id="musicTitle" placeholder="Nome da música (Editável)" type="text">
+                <button onclick="addMusic()">Adicionar Arquivo</button>
+            </div>
 
-        <div class="level">
-            Level 99
+            <div class="input-group" style="width: 100%; max-width: 350px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px dashed #2d2d34;">
+                <span style="font-size: 13px; color: #1db954; font-weight: 600;">🔗 Link Direto (.mp3)</span>
+                <input id="linkUrl" placeholder="Cole o link do áudio..." type="text">
+                <input id="linkTitle" placeholder="Nome da música da web" type="text">
+                <button onclick="locateMusicLink()" style="background: #2563eb;">Localizar Link</button>
+            </div>
         </div>
 
+        <div class="preview-card" id="previewContainer">
+            <h4 style="color: #1db954; margin-bottom: 8px;">✨ Link Pronto!</h4>
+            <p style="font-size: 14px; margin-bottom: 15px;">Nome: <strong id="previewTitle" style="color: #fff;"></strong></p>
+            <div class="input-group">
+                <label style="font-size: 12px; color: #9ca3af;">Adicionar em qual playlist?</label>
+                <select id="selectPlaylistDestination"></select>
+                <button onclick="addLocatedMusic()">Confirmar</button>
+            </div>
+        </div>
+
+        <div id="songs"></div>
     </div>
-
-    <div class="welcome">
-
-        <h1>Criar Addons Minecraft</h1>
-
-        <p>
-            Ferramenta profissional para criar Addons,
-            Manifest, Texturas, UI e Scripts.
-        </p>
-
-        <button class="mc-btn">
-            Criar Projeto
-        </button>
-
-    </div>
-
-</section>
-
-<section class="dashboard">
-
-    <div class="card">
-        <h3>Manifest Maker</h3>
-        <p>Gerar manifest.json completo.</p>
-    </div>
-
-    <div class="card">
-        <h3>Texture Maker</h3>
-        <p>Criar ícones e texturas.</p>
-    </div>
-
-    <div class="card">
-        <h3>UI Maker</h3>
-        <p>Criar interfaces Minecraft.</p>
-    </div>
-
-    <div class="card">
-        <h3>Script Maker</h3>
-        <p>Gerador de Scripts Bedrock.</p>
-    </div>
-
-</section>
-
-<footer>
-    © StarCat Addon Maker 2026
-</footer>
 
 </div>
 
-<script src="script.js"></script>
+<div class="player">
+    <div id="nowPlaying">Nenhuma música tocando</div>
+    
+    <div class="visualizer-container">
+        <canvas id="visualizer"></canvas>
+    </div>
+
+    <audio id="audio" crossorigin="anonymous" style="display:none;"></audio>
+
+    <div class="custom-controls">
+        <div class="main-buttons">
+            <button onclick="prevSong()">⏮</button>
+            <button class="play-btn" id="playPauseBtn" onclick="togglePlay()">▶</button>
+            <button onclick="nextSong()">⏭</button>
+        </div>
+        
+        <div class="progress-container">
+            <span id="currentTimeDisplay">0:00</span>
+            <input type="range" id="progressBar" value="0" min="0" max="100" step="1">
+            <span id="durationDisplay">0:00</span>
+        </div>
+    </div>
+
+    <div class="volume-container">
+        <span>🔊</span>
+        <input type="range" id="volumeSlider" value="100" min="0" max="100" step="1">
+    </div>
+</div>
+
+<script>
+// --- BANCO DE DADOS PROFISSIONAL (INDEXEDDB) ---
+// Isso impede o app de travar com limites de memória e salva os arquivos pesados de verdade
+let db;
+let playlists = [{ name: "Minhas Músicas", songs: [] }];
+let currentPlaylist = 0;
+let playingSongIndex = -1; 
+const audio = document.getElementById("audio");
+
+const request = indexedDB.open("StarMusicDB", 1);
+
+request.onupgradeneeded = (e) => {
+    db = e.target.result;
+    if (!db.objectStoreNames.contains("playlistsData")) {
+        db.createObjectStore("playlistsData", { keyPath: "id" });
+    }
+};
+
+request.onsuccess = (e) => {
+    db = e.target.result;
+    loadFromDB();
+};
+
+function saveToDB() {
+    const tx = db.transaction("playlistsData", "readwrite");
+    const store = tx.objectStore("playlistsData");
+    store.put({ id: "main", data: playlists });
+    renderPlaylists();
+    renderSongs();
+}
+
+function loadFromDB() {
+    const tx = db.transaction("playlistsData", "readonly");
+    const store = tx.objectStore("playlistsData");
+    const getReq = store.get("main");
+    
+    getReq.onsuccess = () => {
+        if (getReq.result && getReq.result.data) {
+            playlists = getReq.result.data;
+        }
+        document.getElementById("currentPlaylistName").innerText = playlists[currentPlaylist].name;
+        renderPlaylists();
+        renderSongs();
+    };
+}
+
+// --- FUNÇÕES DE PLAYLIST ---
+function createPlaylist() {
+    const name = document.getElementById("playlistName").value.trim();
+    if (!name) return alert("Digite um nome para a playlist!");
+    playlists.push({ name: name, songs: [] });
+    document.getElementById("playlistName").value = "";
+    saveToDB();
+}
+
+function selectPlaylist(index) {
+    currentPlaylist = index;
+    document.getElementById("currentPlaylistName").innerText = playlists[index].name;
+    renderPlaylists();
+    renderSongs();
+}
+
+function deletePlaylist(index, event) {
+    event.stopPropagation(); // Evita que clique na lixeira selecione a playlist
+    if(index === 0) return alert("Você não pode apagar a playlist principal!");
+    if(confirm(`Tem certeza que deseja apagar a playlist "${playlists[index].name}"?`)) {
+        playlists.splice(index, 1);
+        if(currentPlaylist >= playlists.length) currentPlaylist = 0; // Ajusta se apagar a atual
+        selectPlaylist(currentPlaylist);
+        saveToDB();
+    }
+}
+
+function renderPlaylists() {
+    const list = document.getElementById("playlistList");
+    list.innerHTML = "";
+    playlists.forEach((playlist, index) => {
+        const isActive = index === currentPlaylist ? "active" : "";
+        const deleteBtn = index !== 0 ? `<button class="btn-danger" onclick="deletePlaylist(${index}, event)">🗑️</button>` : '';
+        
+        list.innerHTML += `
+            <div class="playlist ${isActive}" onclick="selectPlaylist(${index})">
+                <div class="playlist-info">
+                    <b>🎵 ${playlist.name}</b>
+                    <small>${playlist.songs.length} músicas</small>
+                </div>
+                ${deleteBtn}
+            </div>
+        `;
+    });
+}
+
+// --- FUNÇÕES DE MÚSICA (ARQUIVO LOCAL) ---
+function updateFileName() {
+    const file = document.getElementById("musicFile").files[0];
+    const label = document.getElementById("fileLabel");
+    const titleInput = document.getElementById("musicTitle");
+    
+    if (file) {
+        label.innerText = `✔️ ${file.name.substring(0, 20)}...`;
+        label.style.borderColor = "#1db954";
+        // Preenche o nome automaticamente tirando o .mp3/.wav etc
+        if(titleInput.value.trim() === "") {
+            titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+        }
+    } else {
+        label.innerText = "📁 Escolher arquivo de áudio";
+        label.style.borderColor = "#4b5563";
+    }
+}
+
+function addMusic() {
+    const title = document.getElementById("musicTitle").value.trim();
+    const file = document.getElementById("musicFile").files[0];
+    if (!title || !file) return alert("Escolha um arquivo e defina o nome!");
+
+    const reader = new FileReader();
+    reader.onload = function() {
+        playlists[currentPlaylist].songs.push({ 
+            title: title, 
+            src: reader.result,
+            type: 'local' // Marcador para o ícone
+        });
+        
+        document.getElementById("musicTitle").value = "";
+        document.getElementById("musicFile").value = "";
+        document.getElementById("fileLabel").innerText = "📁 Escolher arquivo de áudio";
+        document.getElementById("fileLabel").style.borderColor = "#4b5563";
+        saveToDB();
+    };
+    reader.readAsDataURL(file);
+}
+
+// --- FUNÇÕES DE MÚSICA (LINK WEB) ---
+function locateMusicLink() {
+    let url = document.getElementById("linkUrl").value.trim();
+    let title = document.getElementById("linkTitle").value.trim();
+    
+    if (!url) return alert("Por favor, cole o link do áudio!");
+    
+    // Alerta inteligente de bloqueio CORS para YT/TikTok
+    if (url.includes("youtube.com") || url.includes("youtu.be") || url.includes("tiktok.com")) {
+        alert("Aviso: Navegadores bloqueiam a extração de áudio direto de links do YouTube e TikTok por segurança (CORS). Cole um link direto de arquivo de áudio (.mp3) ou baixe a música e use o 'Upload Local'.");
+        return;
+    }
+
+    if(!title) title = "Música da Web";
+    
+    document.getElementById("previewTitle").innerText = title;
+    const select = document.getElementById("selectPlaylistDestination");
+    select.innerHTML = "";
+    playlists.forEach((playlist, index) => {
+        select.innerHTML += `<option value="${index}">${playlist.name}</option>`;
+    });
+    document.getElementById("previewContainer").style.display = "block";
+}
+
+function addLocatedMusic() {
+    const url = document.getElementById("linkUrl").value.trim();
+    const title = document.getElementById("previewTitle").innerText;
+    const pIndex = parseInt(document.getElementById("selectPlaylistDestination").value);
+    
+    playlists[pIndex].songs.push({ title: title, src: url, type: 'web' });
+    
+    document.getElementById("linkTitle").value = "";
+    document.getElementById("linkUrl").value = "";
+    document.getElementById("previewContainer").style.display = "none";
+    saveToDB();
+}
+
+function deleteSong(index) {
+    if(confirm(`Remover a música "${playlists[currentPlaylist].songs[index].title}"?`)) {
+        playlists[currentPlaylist].songs.splice(index, 1);
+        // Se a música apagada era a que estava tocando, para o player
+        if(playingSongIndex === index) {
+            audio.pause();
+            playingSongIndex = -1;
+            document.getElementById("nowPlaying").innerText = "Nenhuma música tocando";
+            document.getElementById("playPauseBtn").innerText = "▶";
+        } else if (playingSongIndex > index) {
+            // Ajusta o índice se apagou uma música antes da atual
+            playingSongIndex--;
+        }
+        saveToDB();
+    }
+}
+
+function renderSongs() {
+    const songsDiv = document.getElementById("songs");
+    songsDiv.innerHTML = "";
+    const songs = playlists[currentPlaylist].songs;
+
+    if (songs.length === 0) {
+        songsDiv.innerHTML = "<p style='color: #6b7280;'>Nenhuma música nesta playlist.</p>";
+        return;
+    }
+
+    songs.forEach((song, index) => {
+        const isPlaying = playingSongIndex === index ? "playing" : "";
+        const icon = song.type === 'web' ? '🔗' : '📁';
+        
+        songsDiv.innerHTML += `
+            <div class="song ${isPlaying}">
+                <div><b>${index + 1}. ${icon} ${song.title}</b></div>
+                <div class="song-actions">
+                    <button onclick="playSong(${index})" style="background: #1db954;">▶</button>
+                    <button class="btn-danger" onclick="deleteSong(${index})">🗑️</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// --- CONTROLES DO PLAYER (MANTIDOS DA VERSÃO ANTERIOR) ---
+const playPauseBtn = document.getElementById("playPauseBtn");
+const progressBar = document.getElementById("progressBar");
+const currentTimeDisplay = document.getElementById("currentTimeDisplay");
+const durationDisplay = document.getElementById("durationDisplay");
+const volumeSlider = document.getElementById("volumeSlider");
+
+function playSong(index) {
+    if(playlists[currentPlaylist].songs.length === 0) return;
+    
+    playingSongIndex = index;
+    const song = playlists[currentPlaylist].songs[index];
+    
+    audio.src = song.src;
+    audio.play().then(() => {
+        const icon = song.type === 'web' ? '🔗' : '📁';
+        document.getElementById("nowPlaying").innerText = `🎵 Tocando: ${icon} ${song.title}`;
+        playPauseBtn.innerText = "⏸";
+        renderSongs(); 
+        setupVisualizer();
+    }).catch(e => {
+        alert("Erro ao reproduzir. O link da web pode ter quebrado ou o arquivo está corrompido.");
+        console.error(e);
+    });
+}
+
+function togglePlay() {
+    if (!audio.src) return;
+    if (audio.paused) {
+        audio.play();
+        playPauseBtn.innerText = "⏸";
+        setupVisualizer();
+    } else {
+        audio.pause();
+        playPauseBtn.innerText = "▶";
+    }
+}
+
+function nextSong() {
+    if(playingSongIndex === -1 || playlists[currentPlaylist].songs.length === 0) return;
+    let nextIndex = playingSongIndex + 1;
+    if (nextIndex >= playlists[currentPlaylist].songs.length) nextIndex = 0;
+    playSong(nextIndex);
+}
+
+function prevSong() {
+    if(playingSongIndex === -1 || playlists[currentPlaylist].songs.length === 0) return;
+    let prevIndex = playingSongIndex - 1;
+    if (prevIndex < 0) prevIndex = playlists[currentPlaylist].songs.length - 1;
+    playSong(prevIndex);
+}
+
+audio.addEventListener('ended', nextSong);
+
+audio.addEventListener('error', () => {
+    playPauseBtn.innerText = "▶";
+});
+
+audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+        const progressPercent = (audio.currentTime / audio.duration) * 100;
+        progressBar.value = progressPercent;
+        currentTimeDisplay.innerText = formatTime(audio.currentTime);
+        durationDisplay.innerText = formatTime(audio.duration);
+    }
+});
+
+progressBar.addEventListener('input', (e) => {
+    if (audio.duration) {
+        const seekTime = (e.target.value / 100) * audio.duration;
+        audio.currentTime = seekTime;
+    }
+});
+
+volumeSlider.addEventListener('input', (e) => {
+    audio.volume = e.target.value / 100;
+});
+
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+// --- GRÁFICO RGB (MANTIDO) ---
+let audioCtx, analyser, source;
+let canvas = document.getElementById("visualizer");
+let ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function setupVisualizer() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        source = audioCtx.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        analyser.fftSize = 64; 
+        drawVisualizer();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function drawVisualizer() {
+    requestAnimationFrame(drawVisualizer);
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteFrequencyData(dataArray);
+    
+    ctx.fillStyle = "rgba(18, 18, 20, 0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    const barWidth = (canvas.width / bufferLength) * 1.5;
+    let barHeight;
+    let x = 0;
+    
+    for (let i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i] * 0.4;
+        const hue = (i / bufferLength) * 280; 
+        const brightness = Math.max(40, Math.min(70, barHeight)); 
+        ctx.fillStyle = `hsl(${hue}, 100%, ${brightness}%)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+        x += barWidth;
+    }
+}
+</script>
+
 </body>
 </html>
