@@ -1,1 +1,1740 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ouvindo StarMusic!">
+    <title>StarMusic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* Variáveis de cores para transição Light/Dark */
+        :root {
+            --bg-color: #0c0c0e;
+            --text-color: #ffffff;
+            --menu-bg: #18181c;
+            --card-bg: #131316;
+            --border-color: #242429;
+            --accent-color: #1db954; /* Verde estilo Spotify */
+            --search-bg: #1e1e24;
+            --glow-color: rgba(29, 185, 84, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f5f6fa;
+            --text-color: #1e1e24;
+            --menu-bg: #ffffff;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #007bff; /* Azul padrão */
+            --search-bg: #edf2f7;
+            --glow-color: rgba(0, 123, 255, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Animações e Micro-Interações profissionais */
+        button, .card, .item-musica, .btn-container, .btn-tema, .select-lang-item {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        button:active, .card:active, .item-musica:active, .btn-container:active, .select-lang-item:active {
+            transform: scale(0.94);
+        }
+
+        /* Styles para os inputs deslizantes customizados (Seekbar) */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: var(--border-color);
+            border-radius: 50px;
+            height: 6px;
+            outline: none;
+            transition: background 0.3s;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--glow-color);
+            transition: transform 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+
+        /* =========================================
+           HEADER / MENU TRÊS PONTINHOS
+        ========================================= */
+        header {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            position: relative;
+        }
+
+        .menu-trigger {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s, transform 0.2s;
+            padding: 5px 10px;
+        }
+        .menu-trigger:hover {
+            color: var(--accent-color);
+        }
+
+        .painel-menu {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: var(--menu-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 110;
+            min-width: 180px;
+            animation: fadeInMenu 0.2s ease-out;
+        }
+
+        @keyframes fadeInMenu {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-tema {
+            background: none;
+            border: 1px solid var(--border-color);
+            background-color: rgba(255,255,255,0.02);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .btn-tema:hover {
+            border-color: var(--accent-color);
+            background-color: var(--glow-color);
+        }
+
+        .btn-tema i { transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Seletor de Idiomas no Menu */
+        .secao-idioma-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+        .secao-idioma-menu label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            font-weight: bold;
+            margin-left: 5px;
+            color: var(--text-color);
+        }
+        .select-lang-item {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            text-align: left;
+            padding: 8px 12px;
+            font-size: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .select-lang-item:hover {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+        }
+        .select-lang-item.active {
+            background-color: var(--accent-color);
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           ÁREA DE CONTEÚDO CENTRAL (INTEGRADA)
+        ========================================= */
+        main {
+            flex-grow: 1;
+            position: relative;
+            padding: 0 40px;
+            overflow-y: auto;
+        }
+
+        .tela-conteudo {
+            position: absolute;
+            top: 0;
+            left: 40px;
+            right: 40px;
+            bottom: 0;
+            display: none;
+            flex-direction: column;
+            color: var(--text-color);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+        }
+
+        .tela-conteudo.ativa {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .titulo-secao {
+            font-size: 32px;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* BARRA DE PESQUISA & FILTRO */
+        .controles-filtro {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            align-items: center;
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .container-pesquisa {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .barra-pesquisa {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background-color: var(--search-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            color: var(--text-color);
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s;
+        }
+
+        .barra-pesquisa:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px var(--glow-color);
+        }
+
+        .container-pesquisa i.icone-busca {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+            opacity: 0.5;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        #seletorOrdenacao {
+            background-color: var(--search-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        #seletorOrdenacao:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px var(--glow-color);
+        }
+
+        /* Grid de Exibição dos Cards */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--accent-color);
+            box-shadow: 0 8px 20px var(--glow-color);
+        }
+        .card i { font-size: 42px; color: var(--accent-color); margin-bottom: 15px; }
+
+        .card h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Listas Dinâmicas */
+        .secao-musicas-enviadas, .secao-playlists-container { 
+            margin-top: 10px; 
+            display: flex; 
+            flex-direction: column;
+            margin-bottom: 25px;
+        }
+        
+        .secao-musicas-enviadas h3, .secao-playlists-container h3 { font-size: 20px; margin-bottom: 15px; font-weight: 600; }
+        
+        .lista-musicas {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+            padding-right: 8px;
+            max-height: 250px;
+        }
+
+        /* Estilização da barra de rolagem (Scrollbar) */
+        .lista-musicas::-webkit-scrollbar {
+            width: 6px;
+        }
+        .lista-musicas::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .lista-musicas::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+        .lista-musicas::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        .item-musica {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .item-musica:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .info-musica { display: flex; align-items: center; gap: 14px; }
+        .info-musica i { color: var(--accent-color); font-size: 16px; }
+        .nome-musica { font-size: 15px; font-weight: 500; text-align: left; }
+
+        /* =========================================
+           TELA DO PLAYER EXPANDIDO (SOBREPOSIÇÃO GLOBAL)
+        ========================================= */
+        .player-tela-cheia {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            z-index: 100;
+            text-align: center;
+            box-sizing: border-box;
+            padding: 20px;
+            animation: fadeInPlayer 0.3s ease-out;
+        }
+
+        @keyframes fadeInPlayer {
+            from { opacity: 0; transform: scale(1.03); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .btn-voltar-player {
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.8;
+        }
+        .btn-voltar-player:hover { opacity: 1; color: var(--accent-color); }
+
+        .disco-player {
+            width: 210px;
+            height: 210px;
+            background-color: var(--card-bg);
+            border: 4px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 30px var(--glow-color);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.4s ease;
+        }
+
+        .disco-player i {
+            font-size: 75px;
+            color: var(--accent-color);
+        }
+
+        .disco-rodando {
+            animation: rodarDisco 12s linear infinite;
+        }
+
+        @keyframes rodarDisco {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Medidor de Graves (Visualizador Canvas) */
+        #visualizadorGrave {
+            width: 280px;
+            height: 60px;
+            margin-bottom: 25px;
+            background-color: transparent;
+        }
+
+        .meta-player {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .meta-player h2 {
+            font-size: 22px;
+            margin: 0;
+            font-weight: 600;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .botoes-topo-player {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-player-acao {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .btn-player-acao:hover { color: var(--accent-color); }
+        .btn-player-acao.favoritado { color: #ef4444; animation: heartBeat 0.3s ease-out; }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .menu-opcoes-musica {
+            position: absolute;
+            background-color: var(--menu-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px 0;
+            width: 200px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: none;
+            flex-direction: column;
+            z-index: 120;
+            text-align: left;
+            right: 0;
+            top: 35px;
+        }
+
+        .opcao-item {
+            padding: 12px 18px;
+            color: var(--text-color);
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .opcao-item:hover {
+            background-color: var(--card-bg);
+            color: var(--accent-color);
+        }
+
+        .controles-player-linha {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .btn-controle-midia {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 26px;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .btn-controle-midia:hover { color: var(--accent-color); }
+
+        .btn-controle-midia.btn-play-grande {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        .btn-controle-midia.btn-play-grande:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px var(--glow-color);
+        }
+
+        /* =========================================
+           BARRA DE BOTÕES INFERIORES
+        ========================================= */
+        footer {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .container-botoes {
+            display: flex;
+            gap: 120px;
+            position: relative;
+        }
+
+        @media(max-width: 600px) {
+            .container-botoes { gap: 60px; }
+        }
+
+        .btn-container {
+            background: none;
+            border: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .btn-container i {
+            color: var(--text-color);
+            font-size: 22px;
+            margin-bottom: 8px;
+            opacity: 0.6;
+            transition: color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .btn-container span {
+            color: var(--text-color);
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.6;
+            transition: color 0.3s ease, opacity 0.3s ease;
+        }
+
+        .btn-container.selecionado i,
+        .btn-container.selecionado span {
+            color: var(--accent-color);
+            opacity: 1;
+        }
+
+        audio { display: none; }
+
+        /* =========================================
+           MODAL INTERFACE CUSTOMIZADA DO TEMA
+        ========================================= */
+        #modalCustomApp {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        .conteudo-modal-app {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            color: var(--text-color);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: modalScaleUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalScaleUp {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .conteudo-modal-app h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .botoes-modal-linha {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-modal-acao {
+            padding: 12px 26px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-confirmar {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px var(--glow-color);
+        }
+
+        .btn-modal-confirmar:hover {
+            opacity: 0.95;
+            transform: translateY(-2px);
+        }
+
+        .btn-modal-cancelar {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-modal-cancelar:hover {
+            border-color: var(--text-color);
+            background-color: rgba(255,255,255,0.02);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="menu-trigger" onclick="toggleMenu(event)">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
+        <div class="painel-menu" id="painelMenu">
+            <button class="btn-tema" onclick="alternarTema()">
+                <i class="fa-solid fa-moon" id="iconeTema"></i>
+                <span id="textoTema" data-key="modoLight">Modo Light</span>
+            </button>
+            <div class="secao-idioma-menu">
+                <label data-key="idioma">Idioma</label>
+                <button class="select-lang-item" id="lang-pt" onclick="mudarIdioma('pt')">Português (BR) <i class="fa-solid fa-check check-lang"></i></button>
+                <button class="select-lang-item" id="lang-en" onclick="mudarIdioma('en')">English <i class="fa-solid fa-check check-lang"></i></button>
+                <button class="select-lang-item" id="lang-es" onclick="mudarIdioma('es')">Español <i class="fa-solid fa-check check-lang"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        
+        <div class="tela-conteudo" id="tela-biblioteca">
+            <div id="wrapper-biblioteca-home" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
+                <div class="titulo-secao" data-key="suaBiblioteca">Sua Biblioteca</div>
+                <div class="grid-layout">
+                    <div class="card" onclick="verMusicasCurtidas()"><i class="fa-solid fa-heart"></i><h3 data-key="musicasCurtidas">Músicas Curtidas</h3></div>
+                    <div class="card" onclick="verHistorico()"><i class="fa-solid fa-clock-rotate-left"></i><h3 data-key="historico">Histórico</h3></div>
+                </div>
+            </div>
+
+            <div id="wrapper-biblioteca-detalhe" style="display: none; flex-direction: column; width: 100%; height: 100%;">
+                <button class="btn-voltar-player" onclick="voltarHomeBiblioteca()" style="position: static; text-align: left; margin-bottom: 20px;">
+                    <i class="fa-solid fa-chevron-left"></i> <span data-key="voltar">Voltar</span>
+                </button>
+                <div class="titulo-secao" id="tituloDetalheBiblioteca">Subseção</div>
+                <div class="lista-musicas" id="listaBibliotecaContainer"></div>
+            </div>
+        </div>
+
+        <div class="tela-conteudo ativa" id="tela-inicio">
+            <div class="titulo-secao" data-key="inicio">Início</div>
+            <p style="color: var(--text-color); opacity: 0.7; font-size: 16px; line-height: 1.5;" data-key="boasVindas">Bem-vindo de volta! Explore suas músicas e gerencie suas playlists usando o menu inferior.</p>
+        </div>
+
+        <div class="tela-conteudo" id="tela-musica">
+            <div id="wrapper-lista-musica" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
+                <div class="titulo-secao" data-key="musicasPlaylists">Músicas & Playlists</div>
+                
+                <div class="controles-filtro">
+                    <div class="container-pesquisa">
+                        <input type="text" id="barraPesquisaInput" class="barra-pesquisa" placeholder="Buscar músicas upadas..." oninput="filtrarMusicas()">
+                        <i class="fa-solid fa-magnifying-glass icone-busca"></i>
+                    </div>
+                    <select id="seletorOrdenacao" onchange="alterarOrdenacao()">
+                        <option value="data">🕒 Data</option>
+                        <option value="az">🔤 A-Z</option>
+                        <option value="za">🔤 Z-A</option>
+                    </select>
+                </div>
+
+                <div class="grid-layout">
+                    <input type="file" id="uploadMusicaOculto" accept="audio/*" style="display: none;" multiple onchange="processarUploadMusica(event)">
+                    <div class="card" onclick="dispararUpload()"><i class="fa-solid fa-headphones"></i><h3 data-key="minhasMusicas">Minhas Músicas</h3></div>
+                </div>
+
+                <div class="secao-musicas-enviadas">
+                    <h3 data-key="suaListaUploads">Sua Lista de Uploads</h3>
+                    <div class="lista-musicas" id="listaMusicasContainer">
+                        <p id="mensagemVazia" style="color: var(--text-color); opacity: 0.5; font-size: 14px;"></p>
+                    </div>
+                </div>
+
+                <div class="secao-playlists-container">
+                    <h3 data-key="suasPlaylists">Suas Playlists</h3>
+                    <div class="grid-layout" style="margin-bottom: 15px;">
+                        <div class="card card-add" onclick="criarNovaPlaylist()" style="padding: 15px;"><i class="fa-solid fa-circle-plus" style="font-size: 24px; margin-bottom: 5px;"></i><h3 data-key="criarPlaylist">+ Criar Playlist</h3></div>
+                    </div>
+                    <div class="lista-musicas" id="listaPlaylistsContainer">
+                        <p id="mensagemPlaylistVazia" style="color: var(--text-color); opacity: 0.5; font-size: 14px;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wrapper-playlist-detalhe" style="display: none; flex-direction: column; width: 100%; height: 100%;">
+                <button class="btn-voltar-player" onclick="voltarListaMusicas()" style="position: static; text-align: left; margin-bottom: 20px;">
+                    <i class="fa-solid fa-chevron-left"></i> <span data-key="voltarPlaylists">Voltar para Playlists</span>
+                </button>
+                <div class="titulo-secao" id="tituloDetalhePlaylist">Nome da Playlist</div>
+                <div class="lista-musicas" id="listaMusicasPlaylistContainer"></div>
+            </div>
+        </div>
+
+        <div class="player-tela-cheia" id="playerTelaCheia">
+            <button class="btn-voltar-player" onclick="fecharPlayerMusica()">
+                <i class="fa-solid fa-chevron-left"></i> <span data-key="voltar">Voltar</span>
+            </button>
+
+            <h2 id="playerTituloTopo" style="font-size: 24px; margin-top: 40px; margin-bottom: 15px; font-weight: 700; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-color);">Nome da Música</h2>
+
+            <div class="disco-player" id="discoVisual">
+                <i class="fa-solid fa-compact-disc" id="iconeDiscoPadrao"></i>
+                <img id="imgCapaDisco" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Capa">
+            </div>
+
+            <canvas id="visualizadorGrave" width="280" height="60"></canvas>
+
+            <div class="progresso-container" style="width: 100%; max-width: 320px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px;">
+                <input type="range" id="barraProgresso" value="0" min="0" max="100" step="0.1" style="width: 100%;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; opacity: 0.7; color: var(--text-color); font-weight: 500;">
+                    <span id="tempoAtual">0:00</span>
+                    <span id="tempoTotal">0:00</span>
+                </div>
+            </div>
+
+            <div class="meta-player">
+                <h2 id="playerTituloMusica">Nome da Música</h2>
+                <div class="botoes-topo-player">
+                    <button class="btn-player-acao" id="btnFavoritar" onclick="toggleFavorito()"><i class="fa-solid fa-heart"></i></button>
+                    <button class="btn-player-acao" onclick="toggleMenuMusica(event)"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+                
+                <div class="menu-opcoes-musica" id="menuOpcoesMusica">
+                    <button class="opcao-item" onclick="opcaoAdicionarPlaylist()"><i class="fa-solid fa-circle-plus"></i> <span data-key="addPlaylist">Adicionar a Playlist</span></button>
+                    <button class="opcao-item" onclick="opcaoApagarMusica()"><i class="fa-solid fa-trash-can"></i> <span data-key="apagarBiblioteca">Apagar da Biblioteca</span></button>
+                    <button class="opcao-item" onclick="opcaoRenomearMusica()"><i class="fa-solid fa-pen-to-square"></i> <span data-key="renomear">Renomear</span></button>
+                </div>
+            </div>
+
+            <div class="controles-player-linha">
+                <button class="btn-controle-midia" onclick="navegarMusica(-1)"><i class="fa-solid fa-backward-step"></i></button>
+                <button class="btn-controle-midia btn-play-grande" id="btnPlayPlayerCentral" onclick="controlarAudioCentral()"><i class="fa-solid fa-play"></i></button>
+                <button class="btn-controle-midia" onclick="navegarMusica(1)"><i class="fa-solid fa-forward-step"></i></button>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="modalCustomApp" onclick="fecharModalApp()">
+        <div class="conteudo-modal-app" onclick="event.stopPropagation()">
+            <h3 id="modalAppTitulo">Título do Modal</h3>
+            <div id="modalAppCorpo">Corpo do Conteúdo</div>
+            <div class="botoes-modal-linha">
+                <button id="btnModalAppConfirmar" class="btn-modal-acao btn-modal-confirmar" data-key="confirmar">Confirmar</button>
+                <button class="btn-modal-acao btn-modal-cancelar" onclick="fecharModalApp()" data-key="cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="playerAudioGlobal" crossorigin="anonymous"></audio>
+
+    <footer>
+        <div class="container-botoes">
+            <button class="btn-container" onclick="cliqueNavegacao('biblioteca', this)">
+                <i class="fa-solid fa-book-open"></i>
+                <span data-key="navBiblioteca">Biblioteca</span>
+            </button>
+            <button class="btn-container selecionado" onclick="cliqueNavegacao('inicio', this)">
+                <i class="fa-solid fa-house"></i>
+                <span data-key="navInicio">Início</span>
+            </button>
+            <button class="btn-container" onclick="cliqueNavegacao('musica', this)">
+                <i class="fa-solid fa-music"></i>
+                <span data-key="navMusica">Música</span>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // --- ARQUIVOS DE IDIOMAS (DICIONÁRIO I18N) ---
+        const traducoes = {
+            pt: {
+                modoLight: "Modo Light", modoDark: "Modo Dark", idioma: "Idioma", suaBiblioteca: "Sua Biblioteca",
+                musicasCurtidas: "Músicas Curtidas", historico: "Histórico", voltar: "Voltar", inicio: "Início",
+                boasVindas: "Bem-vindo de volta! Explore suas músicas e gerencie suas playlists usando o menu inferior.",
+                musicasPlaylists: "Músicas & Playlists", minhasMusicas: "Minhas Músicas", suaListaUploads: "Sua Lista de Uploads",
+                suasPlaylists: "Suas Playlists", criarPlaylist: "+ Criar Playlist", voltarPlaylists: "Voltar para Playlists",
+                addPlaylist: "Adicionar a Playlist", apagarBiblioteca: "Apagar da Biblioteca", renomear: "Renomear",
+                confirmar: "Confirmar", cancelar: "Cancelar", navBiblioteca: "Biblioteca", navInicio: "Início", navMusica: "Música",
+                placeholderPesquisa: "Buscar músicas upadas...", msgVazia: "Nenhuma música adicionada ainda. Clique em \"Minhas Músicas\" para upar.",
+                msgPlayVazia: "Nenhuma playlist criada ainda.", placeholderCriarPlay: "Nome da playlist...", tituloCriarPlay: "Criar Nova Playlist",
+                playlistSemMusicas: "Essa playlist ainda não tem músicas. Adicione alguma usando o menu de três pontos de uma música tocando!",
+                histVazio: "Seu histórico está vazio. Toque alguma música!", curtidasVazio: "Você ainda não curtiu nenhuma música.",
+                deletarPlayTitulo: "Deletar Playlist", deletarPlayCorpo: "Deseja excluir permanentemente a playlist \"{name}\"?",
+                mscAddSucesso: "\"{title}\" foi adicionada em {playlist}!", mscJaExiste: "Esta música já faz parte desta playlist.",
+                tituloAviso: "Aviso", tituloSucesso: "Sucesso", tituloEscolhaPlay: "Escolha a Playlist", tituloNenhumaPlay: "Nenhuma playlist criada. Crie uma primeiro na aba de Músicas!",
+                apagarMscTitulo: "Apagar Música", apagarMscCorpo: "Tem certeza que quer apagar permanentemente \"{title}\" de toda a biblioteca?",
+                renomearMscTitulo: "Renomear Música"
+            },
+            en: {
+                modoLight: "Light Mode", modoDark: "Dark Mode", idioma: "Language", suaBiblioteca: "Your Library",
+                musicasCurtidas: "Liked Songs", historico: "History", voltar: "Back", inicio: "Home",
+                boasVindas: "Welcome back! Explore your music and manage playlists using the bottom menu.",
+                musicasPlaylists: "Songs & Playlists", minhasMusicas: "My Music", suaListaUploads: "Your Uploads List",
+                suasPlaylists: "Your Playlists", criarPlaylist: "+ Create Playlist", voltarPlaylists: "Back to Playlists",
+                addPlaylist: "Add to Playlist", apagarBiblioteca: "Delete from Library", renomear: "Rename",
+                confirmar: "Confirm", cancelar: "Cancel", navBiblioteca: "Library", navInicio: "Home", navMusica: "Music",
+                placeholderPesquisa: "Search uploaded songs...", msgVazia: "No music added yet. Click \"My Music\" to upload.",
+                msgPlayVazia: "No playlists created yet.", placeholderCriarPlay: "Playlist name...", tituloCriarPlay: "Create New Playlist",
+                playlistSemMusicas: "This playlist has no songs yet. Add songs from the 3-dots option menu while playing!",
+                histVazio: "Your playback history is empty. Play some tracks!", curtidasVazio: "You haven't liked any songs yet.",
+                deletarPlayTitulo: "Delete Playlist", deletarPlayCorpo: "Do you want to permanently delete the playlist \"{name}\"?",
+                mscAddSucesso: "\"{title}\" was successfully added to {playlist}!", mscJaExiste: "This song is already inside this playlist.",
+                tituloAviso: "Warning", tituloSucesso: "Success", tituloEscolhaPlay: "Choose a Playlist", tituloNenhumaPlay: "No playlists found. Create one first inside the Music tab!",
+                apagarMscTitulo: "Delete Song", apagarMscCorpo: "Are you sure you want to permanently delete \"{title}\" from your whole library?",
+                renomearMscTitulo: "Rename Song"
+            },
+            es: {
+                modoLight: "Modo Claro", modoDark: "Modo Oscuro", idioma: "Idioma", suaBiblioteca: "Tu Biblioteca",
+                musicasCurtidas: "Canciones Favoritas", historico: "Historial", voltar: "Volver", inicio: "Inicio",
+                boasVindas: "¡Bienvenido de nuevo! Explora tus canciones y gestiona listas desde el menú inferior.",
+                musicasPlaylists: "Músicas y Listas", minhasMusicas: "Mis Músicas", suaListaUploads: "Tus Subidas",
+                suasPlaylists: "Tus Listas", criarPlaylist: "+ Crear Lista", voltarPlaylists: "Volver a Listas",
+                addPlaylist: "Añadir a Lista", apagarBiblioteca: "Eliminar de Biblioteca", renomear: "Renombrar",
+                confirmar: "Confirmar", cancelar: "Cancelar", navBiblioteca: "Biblioteca", navInicio: "Inicio", navMusica: "Música",
+                placeholderPesquisa: "Buscar músicas subidas...", msgVazia: "No hay música agregada. ¡Haz clic en \"Mis Músicas\" para subir!",
+                msgPlayVazia: "No hay listas creadas todavía.", placeholderCriarPlay: "Nombre de la lista...", tituloCriarPlay: "Crear Nueva Lista",
+                playlistSemMusicas: "Esta lista no tiene canciones aún. ¡Añade usando los tres puntos de una música en reproducción!",
+                histVazio: "Tu historial está vacío. ¡Pon a sonar algo de música!", curtidasVazio: "Aún no has dado me gusta a ninguna canción.",
+                deletarPlayTitulo: "Eliminar Lista", deletarPlayCorpo: "¿Quieres eliminar permanentemente la lista \"{name}\"?",
+                mscAddSucesso: "¡\"{title}\" fue agregada con éxito a {playlist}!", mscJaExiste: "Esta canción ya forma parte de esta lista.",
+                tituloAviso: "Aviso", tituloSucesso: "Éxito", tituloEscolhaPlay: "Selecciona la Lista", tituloNenhumaPlay: "No hay listas creadas. ¡Crea una primero en la pestaña de Música!",
+                apagarMscTitulo: "Eliminar Canción", apagarMscCorpo: "¿Estás seguro de que quieres borrar permanentemente \"{title}\" de toda la biblioteca?",
+                renomearMscTitulo: "Renombrar Canción"
+            }
+        };
+
+        let idiomaAtual = localStorage.getItem('app_idioma') || 'pt';
+
+        // --- INICIALIZAÇÃO DOS ARRAYS DO LOCALSTORAGE (NUNCA SUMIR) ---
+        let bancoMusicas = JSON.parse(localStorage.getItem('app_bancoMusicas')) || [];
+        let historicoMusicas = JSON.parse(localStorage.getItem('app_historicoMusicas')) || [];
+        let playlistsCriadas = JSON.parse(localStorage.getItem('app_playlistsCriadas')) || [];
+        
+        let musicaSelecionadaAtual = null;
+        let criterioOrdenacao = "data"; 
+        
+        const playerAudio = document.getElementById('playerAudioGlobal');
+        const barraProgresso = document.getElementById('barraProgresso');
+        const tempoAtualTxt = document.getElementById('tempoAtual');
+        const tempoTotalTxt = document.getElementById('tempoTotal');
+
+        let contextoAudio = null;
+        let analisador = null;
+        let dadosFrequencia = null;
+        let canvasCtx = null;
+        let idAnimacaoVisualizador = null;
+        let mudancaMatiz = 0;
+
+        // Renderização imediata dos dados guardados ao ligar o app
+        document.addEventListener("DOMContentLoaded", () => {
+            mudarIdioma(idiomaAtual);
+            renderizarListaMusicas();
+            renderizarPlaylists();
+        });
+
+        // Salva as alterações de forma permanente no navegador
+        function atualizarArmazenamentoLocal() {
+            try {
+                localStorage.setItem('app_bancoMusicas', JSON.stringify(bancoMusicas));
+                localStorage.setItem('app_historicoMusicas', JSON.stringify(historicoMusicas));
+                localStorage.setItem('app_playlistsCriadas', JSON.stringify(playlistsCriadas));
+            } catch (e) {
+                console.error("Falha ao salvar no armazenamento local (limite excedido).", e);
+            }
+        }
+
+        // --- GERENCIADOR DE IDIOMAS (I18N EM TEMPO REAL) ---
+        function mudarIdioma(lang) {
+            idiomaAtual = lang;
+            localStorage.setItem('app_idioma', lang);
+
+            // Atualiza marcação visual de seleção do idioma
+            document.querySelectorAll('.select-lang-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`lang-${lang}`).classList.add('active');
+
+            // Traduz elementos estáticos com o atributo data-key
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const chave = el.getAttribute('data-key');
+                if (traducoes[lang][chave]) {
+                    el.innerText = traducoes[lang][chave];
+                }
+            });
+
+            // Atualiza placeholders dinâmicos
+            document.getElementById('barraPesquisaInput').placeholder = traducoes[lang]['placeholderPesquisa'];
+
+            // Recarrega listagens contextuais de texto para alinhar ao idioma atual
+            renderizarListaMusicas();
+            renderizarPlaylists();
+        }
+
+        // --- SINTETIZADOR DE EFEITOS SONOROS NATIVO (SÓ COM CÓDIGO) ---
+        function playInterfaceSound(type = 'click') {
+            try {
+                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtxClass();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                if (type === 'toggle') {
+                    // Som futurista de chaveamento rápido
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(580, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1150, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                } else {
+                    // Clique sutil e limpo de interface profissional
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(380, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.04);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.04);
+                }
+            } catch(e) {
+                // Previne interrupções caso o navegador bloqueie áudio temporariamente
+            }
+        }
+
+        // Listener global interceptor de cliques para disparar sons nas interações corretas
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('.card') || e.target.closest('.item-musica') || e.target.closest('.btn-container')) {
+                const elementToggle = e.target.closest('.btn-tema') || e.target.closest('#btnFavoritar') || e.target.closest('.select-lang-item');
+                playInterfaceSound(elementToggle ? 'toggle' : 'click');
+            }
+        });
+
+        // --- SISTEMA DE INTERFACE DO MODAL INDIVIDUAL DO APP ---
+        function abrirModalApp(titulo, htmlConteudo, callbackConfirmar, exibirConfirmar = true) {
+            document.getElementById('modalAppTitulo').innerText = titulo;
+            document.getElementById('modalAppCorpo').innerHTML = htmlConteudo;
+            
+            const btnConfirmar = document.getElementById('btnModalAppConfirmar');
+            btnConfirmar.style.display = exibirConfirmar ? 'inline-block' : 'none';
+
+            const cloneBtn = btnConfirmar.cloneNode(true);
+            btnConfirmar.parentNode.replaceChild(cloneBtn, btnConfirmar);
+
+            if(exibirConfirmar) {
+                cloneBtn.addEventListener('click', () => {
+                    callbackConfirmar();
+                    fecharModalApp();
+                });
+            }
+            document.getElementById('modalCustomApp').style.display = 'flex';
+        }
+
+        function fecharModalApp() {
+            document.getElementById('modalCustomApp').style.display = 'none';
+        }
+
+        function dispararUpload() {
+            document.getElementById('uploadMusicaOculto').click();
+        }
+
+        function extrairCapaAudio(arquivo, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const buffer = e.target.result;
+                const view = new DataView(buffer);
+                if (buffer.byteLength < 10) { callback(null); return; }
+                
+                if (view.getUint8(0) === 0x49 && view.getUint8(1) === 0x44 && view.getUint8(2) === 0x33) {
+                    let offset = 10;
+                    const totalSize = ((view.getUint8(6) & 0x7F) << 21) |
+                                      ((view.getUint8(7) & 0x7F) << 14) |
+                                      ((view.getUint8(8) & 0x7F) << 7) |
+                                      (view.getUint8(9) & 0x7F);
+                    
+                    while (offset < totalSize && offset < buffer.byteLength - 10) {
+                        let frameID = String.fromCharCode(
+                            view.getUint8(offset), view.getUint8(offset+1),
+                            view.getUint8(offset+2), view.getUint8(offset+3)
+                        );
+                        let frameSize = (view.getUint8(offset+4) << 24) |
+                                        (view.getUint8(offset+5) << 16) |
+                                        (view.getUint8(offset+6) << 8) |
+                                        view.getUint8(offset+7);
+                        
+                        if (frameSize <= 0 || offset + 10 + frameSize > buffer.byteLength) break;
+                        
+                        if (frameID === "APIC") {
+                            let apicOffset = offset + 10;
+                            let encoding = view.getUint8(apicOffset);
+                            let mimeType = "";
+                            let i = apicOffset + 1;
+                            
+                            while (i < buffer.byteLength && view.getUint8(i) !== 0) {
+                                mimeType += String.fromCharCode(view.getUint8(i));
+                                i++;
+                            }
+                            i++; 
+                            i++; 
+                            
+                            if (encoding === 1 || encoding === 2) {
+                                while (i < buffer.byteLength - 1 && !(view.getUint8(i) === 0 && view.getUint8(i+1) === 0)) { i += 2; }
+                                i += 2;
+                            } else {
+                                while (i < buffer.byteLength && view.getUint8(i) !== 0) { i++; }
+                                i++;
+                            }
+                            
+                            let imgDataSize = (offset + 10 + frameSize) - i;
+                            if (imgDataSize > 0 && i + imgDataSize <= buffer.byteLength) {
+                                const imgBlob = new Blob([new Uint8Array(buffer, i, imgDataSize)], { type: mimeType || "image/jpeg" });
+                                const url = URL.createObjectURL(imgBlob);
+                                callback(url);
+                                return;
+                            }
+                        }
+                        offset += 10 + frameSize;
+                    }
+                }
+                callback(null);
+            };
+            reader.readAsArrayBuffer(arquivo.slice(0, 3 * 1024 * 1024)); 
+        }
+
+        function processarUploadMusica(event) {
+            const arquivos = event.target.files;
+            if (!arquivos || arquivos.length === 0) return;
+
+            Array.from(arquivos).forEach((arquivo) => {
+                const nomeLimpo = arquivo.name.replace(/\.[^/.]+$/, "");
+                
+                extrairCapaAudio(arquivo, function(urlCapa) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const novaMusica = {
+                            id: Date.now() + Math.random(),
+                            titulo: nomeLimpo,
+                            src: e.target.result,
+                            capa: urlCapa, 
+                            favorita: false,
+                            dataCriacao: Date.now()
+                        };
+                        bancoMusicas.push(novaMusica);
+                        atualizarArmazenamentoLocal();
+                        renderizarListaMusicas();
+                    };
+                    reader.readAsDataURL(arquivo);
+                });
+            });
+
+            event.target.value = "";
+        }
+
+        function alterarOrdenacao() {
+            criterioOrdenacao = document.getElementById('seletorOrdenacao').value;
+            renderizarListaMusicas();
+        }
+
+        function renderizarListaMusicas(filtro = "") {
+            const container = document.getElementById('listaMusicasContainer');
+            const msgVazia = document.getElementById('mensagemVazia');
+            if(!container) return;
+
+            let musicasOrdenadas = [...bancoMusicas];
+            if (criterioOrdenacao === "az") {
+                musicasOrdenadas.sort((a, b) => a.titulo.localeCompare(b.titulo));
+            } else if (criterioOrdenacao === "za") {
+                musicasOrdenadas.sort((a, b) => b.titulo.localeCompare(a.titulo));
+            } else if (criterioOrdenacao === "data") {
+                musicasOrdenadas.sort((a, b) => b.dataCriacao - a.dataCriacao);
+            }
+
+            const musicasFiltradas = musicasOrdenadas.filter(m => 
+                m.titulo.toLowerCase().includes(filtro.toLowerCase())
+            );
+
+            if(bancoMusicas.length === 0) {
+                msgVazia.style.display = "block";
+                msgVazia.innerText = traducoes[idiomaAtual]['msgVazia'];
+                container.innerHTML = "";
+                container.appendChild(msgVazia);
+                return;
+            }
+
+            if(musicasFiltradas.length === 0) {
+                msgVazia.style.display = "block";
+                msgVazia.innerText = "."; // Fallback limpo para busca sem match
+                container.innerHTML = "";
+                container.appendChild(msgVazia);
+                return;
+            }
+
+            msgVazia.style.display = "none";
+            container.innerHTML = "";
+
+            musicasFiltradas.forEach((musica, index) => {
+                const row = document.createElement('div');
+                row.className = 'item-musica';
+                row.onclick = function() { abrirPlayerMusica(musica.id); };
+                
+                let iconeCapa = musica.capa 
+                    ? `<img src="${musica.capa}" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover;" />`
+                    : `<i class="fa-solid fa-music"></i>`;
+
+                row.innerHTML = `
+                    <div class="info-musica">
+                        ${iconeCapa}
+                        <span class="nome-musica"><strong>${index + 1}.</strong> ${musica.titulo}</span>
+                    </div>
+                    <div><i class="fa-solid fa-chevron-right" style="opacity: 0.4; font-size: 12px;"></i></div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        /* --- SESSÃO PLAYLISTS --- */
+        function criarNovaPlaylist() {
+            const corpoInputHtml = `<input type="text" id="modalInputNomePlaylist" class="barra-pesquisa" style="padding-left:15px; width:100%; box-sizing:border-box;" placeholder="${traducoes[idiomaAtual]['placeholderCriarPlay']}">`;
+            
+            abrirModalApp(traducoes[idiomaAtual]['tituloCriarPlay'], corpoInputHtml, () => {
+                const nome = document.getElementById('modalInputNomePlaylist').value;
+                if(nome && nome.trim() !== "") {
+                    playlistsCriadas.push({
+                        id: Date.now(),
+                        nome: nome.trim(),
+                        musicas: []
+                    });
+                    atualizarArmazenamentoLocal();
+                    renderizarPlaylists();
+                }
+            });
+        }
+
+        function renderizarPlaylists() {
+            const container = document.getElementById('listaPlaylistsContainer');
+            const msgVazia = document.getElementById('mensagemPlaylistVazia');
+            if(!container) return;
+
+            if (playlistsCriadas.length === 0) {
+                msgVazia.style.display = "block";
+                msgVazia.innerText = traducoes[idiomaAtual]['msgPlayVazia'];
+                container.innerHTML = "";
+                container.appendChild(msgVazia);
+                return;
+            }
+
+            msgVazia.style.display = "none";
+            container.innerHTML = "";
+
+            playlistsCriadas.forEach((playlist) => {
+                const row = document.createElement('div');
+                row.className = 'item-musica';
+                row.onclick = function() { verDetalhesPlaylist(playlist.id); };
+                row.innerHTML = `
+                    <div class="info-musica">
+                        <i class="fa-solid fa-list-ul" style="color: var(--accent-color);"></i>
+                        <span class="nome-musica">${playlist.nome}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size: 12px; opacity: 0.5;">${playlist.musicas.length} mscs</span>
+                        <i class="fa-solid fa-trash-can" style="color: #ef4444; font-size:13px; cursor:pointer; padding: 4px;" onclick="apagarPlaylistEstrutura(event, ${playlist.id})"></i>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function apagarPlaylistEstrutura(event, idPlaylist) {
+            event.stopPropagation();
+            const bancoPlaylist = playlistsCriadas.find(p => p.id === idPlaylist);
+            if(!bancoPlaylist) return;
+
+            let msgCorpo = traducoes[idiomaAtual]['deletarPlayCorpo'].replace("{name}", bancoPlaylist.nome);
+
+            abrirModalApp(traducoes[idiomaAtual]['deletarPlayTitulo'], `<p style="opacity:0.8;">${msgCorpo}</p>`, () => {
+                playlistsCriadas = playlistsCriadas.filter(p => p.id !== idPlaylist);
+                atualizarArmazenamentoLocal();
+                renderizarPlaylists();
+                voltarListaMusicas();
+            });
+        }
+
+        function verDetalhesPlaylist(idPlaylist) {
+            const playlist = playlistsCriadas.find(p => p.id === idPlaylist);
+            if (!playlist) return;
+
+            document.getElementById('wrapper-lista-musica').style.display = 'none';
+            document.getElementById('wrapper-playlist-detalhe').style.display = 'flex';
+            document.getElementById('tituloDetalhePlaylist').innerText = playlist.nome;
+
+            const container = document.getElementById('listaMusicasPlaylistContainer');
+            container.innerHTML = '';
+
+            if (playlist.musicas.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-color); opacity: 0.5; font-size: 14px; padding: 10px;">${traducoes[idiomaAtual]['playlistSemMusicas']}</p>`;
+                return;
+            }
+
+            playlist.musicas.forEach((musica, index) => {
+                const row = document.createElement('div');
+                row.className = 'item-musica';
+                row.onclick = function() { abrirPlayerMusica(musica.id); };
+
+                let iconeCapa = musica.capa 
+                    ? `<img src="${musica.capa}" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover;" />`
+                    : `<i class="fa-solid fa-music"></i>`;
+
+                row.innerHTML = `
+                    <div class="info-musica">
+                        ${iconeCapa}
+                        <span class="nome-musica"><strong>${index + 1}.</strong> ${musica.titulo}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button onclick="removerMusicaDaPlaylist(event, ${playlist.id}, ${musica.id})" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 14px;" title="Remover">
+                            <i class="fa-solid fa-minus-circle"></i>
+                        </button>
+                        <i class="fa-solid fa-chevron-right" style="opacity: 0.4; font-size: 12px;"></i>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function voltarListaMusicas() {
+            document.getElementById('wrapper-playlist-detalhe').style.display = 'none';
+            document.getElementById('wrapper-lista-musica').style.display = 'flex';
+        }
+
+        function removerMusicaDaPlaylist(event, idPlaylist, idMusica) {
+            event.stopPropagation(); 
+            const playlist = playlistsCriadas.find(p => p.id === idPlaylist);
+            if (playlist) {
+                playlist.musicas = playlist.musicas.filter(m => m.id !== idMusica);
+                atualizarArmazenamentoLocal();
+                verDetalhesPlaylist(idPlaylist);
+                renderizarPlaylists();
+            }
+        }
+
+        /* --- SESSÃO BIBLIOTECA --- */
+        function verMusicasCurtidas() {
+            document.getElementById('wrapper-biblioteca-home').style.display = 'none';
+            document.getElementById('wrapper-biblioteca-detalhe').style.display = 'flex';
+            document.getElementById('tituloDetalheBiblioteca').innerText = traducoes[idiomaAtual]['musicasCurtidas'];
+            
+            const curtidas = bancoMusicas.filter(m => m.favorita);
+            renderizarListaGenericaBiblioteca(curtidas, traducoes[idiomaAtual]['curtidasVazio']);
+        }
+
+        function verHistorico() {
+            document.getElementById('wrapper-biblioteca-home').style.display = 'none';
+            document.getElementById('wrapper-biblioteca-detalhe').style.display = 'flex';
+            document.getElementById('tituloDetalheBiblioteca').innerText = traducoes[idiomaAtual]['historico'];
+            
+            renderizarListaGenericaBiblioteca(historicoMusicas, traducoes[idiomaAtual]['histVazio']);
+        }
+
+        function voltarHomeBiblioteca() {
+            document.getElementById('wrapper-biblioteca-detalhe').style.display = 'none';
+            document.getElementById('wrapper-biblioteca-home').style.display = 'flex';
+        }
+
+        function renderizarListaGenericaBiblioteca(lista, mensagemSeVazio) {
+            const container = document.getElementById('listaBibliotecaContainer');
+            container.innerHTML = '';
+
+            if (lista.length === 0) {
+                container.innerHTML = `<p style="color: var(--text-color); opacity: 0.5; font-size: 14px;">${mensagemSeVazio}</p>`;
+                return;
+            }
+
+            lista.forEach((musica, index) => {
+                const row = document.createElement('div');
+                row.className = 'item-musica';
+                row.onclick = function() { abrirPlayerMusica(musica.id); };
+                
+                let iconeCapa = musica.capa 
+                    ? `<img src="${musica.capa}" style="width: 32px; height: 32px; border-radius: 4px; object-fit: cover;" />`
+                    : `<i class="fa-solid fa-music"></i>`;
+
+                row.innerHTML = `
+                    <div class="info-musica">
+                        ${iconeCapa}
+                        <span class="nome-musica"><strong>${index + 1}.</strong> ${musica.titulo}</span>
+                    </div>
+                    <div><i class="fa-solid fa-chevron-right" style="opacity: 0.4; font-size: 12px;"></i></div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        /* --- MEDIDOR DE GRAVE COM CORES RGB --- */
+        function inicializarVisualizadorAudio() {
+            if (contextoAudio) return;
+
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                contextoAudio = new AudioContextClass();
+                analisador = contextoAudio.createAnalyser();
+                analisador.fftSize = 32;
+                
+                const origem = contextoAudio.createMediaElementSource(playerAudio);
+                origem.connect(analisador);
+                analisador.connect(contextoAudio.destination);
+
+                const canvas = document.getElementById('visualizadorGrave');
+                canvasCtx = canvas.getContext('2d');
+                
+                const bufferLength = analisador.frequencyBinCount;
+                dadosFrequencia = new Uint8Array(bufferLength);
+
+                desenharVisualizadorRGB();
+            } catch (e) {
+                console.error("Web Audio API não suportada neste dispositivo.", e);
+            }
+        }
+
+        function desenharVisualizadorRGB() {
+            idAnimacaoVisualizador = requestAnimationFrame(desenharVisualizadorRGB);
+            if (!analisador || !canvasCtx) return;
+
+            const canvas = document.getElementById('visualizadorGrave');
+            const largura = canvas.width;
+            const altura = canvas.height;
+
+            analisador.getByteFrequencyData(dadosFrequencia);
+            canvasCtx.clearRect(0, 0, largura, altura);
+
+            const numBarras = dadosFrequencia.length;
+            const larguraBarra = (largura / numBarras) * 1.6;
+            let x = 0;
+
+            mudancaMatiz = (mudancaMatiz + 1) % 360;
+
+            for (let i = 0; i < numBarras; i++) {
+                let multiplicadorGrave = (i < 4) ? 1.4 : 0.7;
+                let alturaBarra = dadosFrequencia[i] * multiplicadorGrave * 0.22;
+
+                if (alturaBarra > altura) alturaBarra = altura;
+
+                const corMatiz = (i * 25 + mudancaMatiz) % 360;
+                canvasCtx.fillStyle = `hsl(${corMatiz}, 100%, 55%)`;
+                canvasCtx.fillRect(x, altura - alturaBarra, larguraBarra - 3, alturaBarra);
+
+                x += larguraBarra;
+            }
+        }
+
+        /* --- CONTROLE DA TELA INTERNA DO PLAYER --- */
+        function abrirPlayerMusica(id) {
+            const musica = bancoMusicas.find(m => m.id == id);
+            if(!musica) return;
+
+            musicaSelecionadaAtual = musica;
+            
+            historicoMusicas = historicoMusicas.filter(m => m.id !== musica.id);
+            historicoMusicas.unshift(musica);
+            atualizarArmazenamentoLocal();
+
+            document.getElementById('playerTituloTopo').innerText = musica.titulo;
+            document.getElementById('playerTituloMusica').innerText = musica.titulo;
+            
+            const imgCapa = document.getElementById('imgCapaDisco');
+            const iconePadrao = document.getElementById('iconeDiscoPadrao');
+            if (musica.capa) {
+                imgCapa.src = musica.capa;
+                imgCapa.style.display = 'block';
+                iconePadrao.style.display = 'none';
+            } else {
+                imgCapa.src = '';
+                imgCapa.style.display = 'none';
+                iconePadrao.style.display = 'block';
+            }
+
+            const btnFav = document.getElementById('btnFavoritar');
+            if(musica.favorita) btnFav.classList.add('favoritado');
+            else btnFav.classList.remove('favoritado');
+
+            if(playerAudio.src !== musica.src) {
+                playerAudio.src = musica.src;
+                playerAudio.play().catch(() => {});
+            }
+            
+            if (contextoAudio && contextoAudio.state === 'suspended') {
+                contextoAudio.resume();
+            }
+            inicializarVisualizadorAudio();
+            atualizarBotaoPlayCentral();
+
+            document.getElementById('playerTelaCheia').style.display = "flex";
+        }
+
+        function fecharPlayerMusica() {
+            document.getElementById('playerTelaCheia').style.display = "none";
+            document.getElementById('menuOpcoesMusica').style.display = "none";
+        }
+
+        function controlarAudioCentral() {
+            if(!musicaSelecionadaAtual) return;
+            if(playerAudio.paused) {
+                playerAudio.play().catch(() => {});
+                if(contextoAudio) contextoAudio.resume();
+            } else {
+                playerAudio.pause();
+            }
+            atualizarBotaoPlayCentral();
+        }
+
+        function atualizarBotaoPlayCentral() {
+            const btn = document.getElementById('btnPlayPlayerCentral');
+            const disco = document.getElementById('discoVisual');
+            if(!btn || !disco) return;
+            if(playerAudio.paused) {
+                btn.innerHTML = `<i class="fa-solid fa-play"></i>`;
+                disco.classList.remove('disco-running', 'disco-rodando');
+            } else {
+                btn.innerHTML = `<i class="fa-solid fa-pause"></i>`;
+                disco.classList.add('disco-rodando');
+            }
+        }
+
+        function navegarMusica(direcao) {
+            if (bancoMusicas.length <= 1 || !musicaSelecionadaAtual) return;
+            
+            let indexAtual = bancoMusicas.findIndex(m => m.id === musicaSelecionadaAtual.id);
+            let novoIndex = indexAtual + direcao;
+
+            if (novoIndex < 0) novoIndex = bancoMusicas.length - 1; 
+            if (novoIndex >= bancoMusicas.length) novoIndex = 0; 
+
+            abrirPlayerMusica(bancoMusicas[novoIndex].id);
+        }
+
+        function toggleFavorito() {
+            if(!musicaSelecionadaAtual) return;
+            musicaSelecionadaAtual.favorita = !musicaSelecionadaAtual.favorita;
+            atualizarArmazenamentoLocal();
+            const btnFav = document.getElementById('btnFavoritar');
+            if(musicaSelecionadaAtual.favorita) btnFav.classList.add('favoritado');
+            else btnFav.classList.remove('favoritado');
+        }
+
+        function formatarTempo(segundos) {
+            if (isNaN(segundos)) return "0:00";
+            const mins = Math.floor(segundos / 60);
+            const secs = Math.floor(segundos % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        playerAudio.addEventListener('timeupdate', () => {
+            if (!playerAudio.duration) return;
+            const porcentagem = (playerAudio.currentTime / playerAudio.duration) * 100;
+            barraProgresso.value = porcentagem;
+            tempoAtualTxt.innerText = formatarTempo(playerAudio.currentTime);
+        });
+
+        playerAudio.addEventListener('loadedmetadata', () => {
+            tempoTotalTxt.innerText = formatarTempo(playerAudio.duration);
+        });
+
+        barraProgresso.addEventListener('input', () => {
+            if (!playerAudio.duration) return;
+            const novoTempo = (barraProgresso.value / 100) * playerAudio.duration;
+            playerAudio.currentTime = novoTempo;
+            tempoAtualTxt.innerText = formatarTempo(novoTempo);
+        });
+
+        function toggleMenuMusica(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('menuOpcoesMusica');
+            menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        /* --- OPERAÇÕES DA MÚSICA COM MODAL TRADUZIDO --- */
+        function opcaoAdicionarPlaylist() {
+            if(playlistsCriadas.length === 0) {
+                abrirModalApp(traducoes[idiomaAtual]['tituloAviso'], `<p style='opacity:0.7;'>${traducoes[idiomaAtual]['tituloNenhumaPlay']}</p>`, null, false);
+                return;
+            }
+
+            let htmlListaPlaylists = `<div style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; padding-right:5px;">`;
+            playlistsCriadas.forEach((p) => {
+                htmlListaPlaylists += `
+                    <div class="item-musica" style="background-color: var(--bg-color); border-color: var(--border-color);" onclick="processarInclusaoPlaylist(${p.id})">
+                        <div class="info-musica">
+                            <i class="fa-solid fa-list-ul"></i>
+                            <span class="nome-musica">${p.nome}</span>
+                        </div>
+                        <i class="fa-solid fa-plus" style="color: var(--accent-color); font-size:12px;"></i>
+                    </div>
+                `;
+            });
+            htmlListaPlaylists += `</div>`;
+
+            abrirModalApp(traducoes[idiomaAtual]['tituloEscolhaPlay'], htmlListaPlaylists, null, false);
+            document.getElementById('menuOpcoesMusica').style.display = 'none';
+        }
+
+        function processarInclusaoPlaylist(idPlaylist) {
+            const playlist = playlistsCriadas.find(p => p.id === idPlaylist);
+            if(playlist) {
+                if (!playlist.musicas.some(m => m.id === musicaSelecionadaAtual.id)) {
+                    playlist.musicas.push(musicaSelecionadaAtual);
+                    atualizarArmazenamentoLocal();
+                    renderizarPlaylists();
+                    fecharModalApp();
+                    
+                    let msgSucesso = traducoes[idiomaAtual]['mscAddSucesso'].replace("{title}", musicaSelecionadaAtual.titulo).replace("{playlist}", playlist.nome);
+                    abrirModalApp(traducoes[idiomaAtual]['tituloSucesso'], `<p style='opacity:0.8;'>${msgSucesso}</p>`, null, false);
+                } else {
+                    fecharModalApp();
+                    abrirModalApp(traducoes[idiomaAtual]['tituloAviso'], `<p style='opacity:0.7;'>${traducoes[idiomaAtual]['mscJaExiste']}</p>`, null, false);
+                }
+            }
+        }
+
+        function opcaoApagarMusica() {
+            let msgCorpo = traducoes[idiomaAtual]['apagarMscCorpo'].replace("{title}", musicaSelecionadaAtual.titulo);
+            
+            abrirModalApp(traducoes[idiomaAtual]['apagarMscTitulo'], `<p style="opacity: 0.8;">${msgCorpo}</p>`, () => {
+                playerAudio.pause();
+                playerAudio.src = "";
+                bancoMusicas = bancoMusicas.filter(m => m.id !== musicaSelecionadaAtual.id);
+                historicoMusicas = historicoMusicas.filter(m => m.id !== musicaSelecionadaAtual.id);
+                
+                playlistsCriadas.forEach(p => {
+                    p.musicas = p.musicas.filter(m => m.id !== musicaSelecionadaAtual.id);
+                });
+
+                atualizarArmazenamentoLocal();
+                renderizarListaMusicas();
+                renderizarPlaylists();
+                fecharPlayerMusica();
+            });
+            document.getElementById('menuOpcoesMusica').style.display = 'none';
+        }
+
+        function opcaoRenomearMusica() {
+            const htmlInput = `<input type="text" id="modalInputRenomearMsc" class="barra-pesquisa" style="padding-left:15px; width:100%; box-sizing:border-box;" value="${musicaSelecionadaAtual.titulo}">`;
+            
+            abrirModalApp(traducoes[idiomaAtual]['renomearMscTitulo'], htmlInput, () => {
+                const novoNome = document.getElementById('modalInputRenomearMsc').value;
+                if(novoNome && novoNome.trim() !== "") {
+                    musicaSelecionadaAtual.titulo = novoNome.trim();
+                    
+                    // Sincroniza o novo nome dentro de todas as playlists estruturadas
+                    playlistsCriadas.forEach(p => {
+                        let mscNoCombo = p.musicas.find(m => m.id === musicaSelecionadaAtual.id);
+                        if(mscNoCombo) mscNoCombo.titulo = novoNome.trim();
+                    });
+
+                    document.getElementById('playerTituloTopo').innerText = musicaSelecionadaAtual.titulo;
+                    document.getElementById('playerTituloMusica').innerText = musicaSelecionadaAtual.titulo;
+                    
+                    atualizarArmazenamentoLocal();
+                    renderizarListaMusicas();
+                }
+            });
+            document.getElementById('menuOpcoesMusica').style.display = 'none';
+        }
+
+        document.addEventListener('click', () => {
+            const menuOpcoes = document.getElementById('menuOpcoesMusica');
+            const painelMenu = document.getElementById('painelMenu');
+            if(menuOpcoes) menuOpcoes.style.display = 'none';
+            if(painelMenu) painelMenu.style.display = 'none';
+        });
+
+        playerAudio.addEventListener('ended', () => {
+            if(bancoMusicas.length > 1) {
+                navegarMusica(1);
+            } else {
+                atualizarBotaoPlayCentral();
+            }
+        });
+
+        playerAudio.addEventListener('play', () => { atualizarBotaoPlayCentral(); });
+        playerAudio.addEventListener('pause', () => { atualizarBotaoPlayCentral(); });
+
+        function cliqueNavegacao(tipo, elemento) {
+            fecharPlayerMusica();
+
+            document.querySelectorAll('.btn-container').forEach(btn => btn.classList.remove('selecionado'));
+            elemento.classList.add('selecionado');
+
+            const todasTelas = document.querySelectorAll('.tela-conteudo');
+            todasTelas.forEach(tela => {
+                tela.classList.remove('ativa');
+                tela.style.display = 'none';
+            });
+
+            if(tipo === 'biblioteca') {
+                voltarHomeBiblioteca();
+            }
+            if(tipo === 'musica') {
+                voltarListaMusicas();
+            }
+
+            const telaAlvo = document.getElementById(`tela-${tipo}`);
+            telaAlvo.style.display = 'flex';
+            setTimeout(() => { telaAlvo.classList.add('ativa'); }, 20);
+        }
+
+        function toggleMenu(event) {
+            event.stopPropagation();
+            const painel = document.getElementById('painelMenu');
+            painel.style.display = (painel.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        function alternarTema() {
+            const html = document.documentElement;
+            const icone = document.getElementById('iconeTema');
+            const texto = document.getElementById('textoTema');
+            icone.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                if (html.getAttribute('data-theme') === 'light') {
+                    html.removeAttribute('data-theme');
+                    icone.className = 'fa-solid fa-moon';
+                    texto.innerText = traducoes[idiomaAtual]['modoLight'];
+                } else {
+                    html.setAttribute('data-theme', 'light');
+                    icone.className = 'fa-solid fa-sun';
+                    texto.innerText = traducoes[idiomaAtual]['modoDark'];
+                }
+                icone.style.transform = 'rotate(0deg)';
+            }, 250);
+        }
+    </script>
+</body>
+</html>
